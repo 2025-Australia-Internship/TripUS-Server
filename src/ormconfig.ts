@@ -12,5 +12,5 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   database: process.env.DB_NAME,
   entities: ['dist/**/*.entity.js'],
   synchronize: true,
-  timezone: 'z',
+  timezone: 'z', // nestORM utc로 변경
 };

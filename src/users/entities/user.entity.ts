@@ -1,4 +1,10 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 @Entity({ name: 'users' })
@@ -30,6 +36,9 @@ export class User {
 
   @Column('varchar', { length: 100, nullable: true, name: 'status' })
   status: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  'created_at': Date;
 
   @BeforeInsert()
   private beforeInsert() {
