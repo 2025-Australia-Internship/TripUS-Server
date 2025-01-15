@@ -21,7 +21,7 @@ export class LandmarksService {
     return this.LandmarkRepository.find();
   }
 
-  async findOne(landmark_id: number): Promise<Landmark | undefined> {
+  async findOne(landmark_id: number): Promise<Landmark> {
     return this.LandmarkRepository.findOneBy({ landmark_id });
   }
 

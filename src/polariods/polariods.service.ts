@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePolariodDto } from './dto/polariod.dto';
-import { UpdatePolariodDto } from './dto/update-polariod.dto';
+import { PolariodDto } from './dto/polariod.dto';
 
 @Injectable()
 export class PolariodsService {
-  create(createPolariodDto: CreatePolariodDto) {
+  create(createPolariodDto: PolariodDto) {
     return 'This action adds a new polariod';
   }
 
@@ -16,7 +15,7 @@ export class PolariodsService {
     return `This action returns a #${id} polariod`;
   }
 
-  update(id: number, updatePolariodDto: UpdatePolariodDto) {
+  update(id: number, updatePolariodDto: PolariodDto) {
     return `This action updates a #${id} polariod`;
   }
 
