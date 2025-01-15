@@ -3,9 +3,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Polariod } from 'src/polariods/entities/polariod.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -39,6 +41,9 @@ export class User {
 
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
+
+  @OneToMany(() => Polariod, (polaroid) => polaroid.user_id)
+  polariods: Polariod[];
 
   @BeforeInsert()
   private beforeInsert() {
