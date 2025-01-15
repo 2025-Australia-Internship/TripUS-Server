@@ -7,14 +7,17 @@ import { typeORMConfig } from './ormconfig';
 import { UsersModule } from './users/users.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtStrategy } from './auth/jwt.strategy';
+import { PolariodsModule } from './polariods/polariods.module';
 
 @Module({
   imports: [
     UsersModule,
+    PolariodsModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(typeORMConfig),
+    PolariodsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtStrategy }],
