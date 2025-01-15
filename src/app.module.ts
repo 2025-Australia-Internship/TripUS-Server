@@ -7,6 +7,7 @@ import { typeORMConfig } from './ormconfig';
 import { UsersModule } from './users/users.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtStrategy } from './auth/jwt.strategy';
+import { LandmarksModule } from './landmarks/landmarks.module';
 import { PolariodsModule } from './polariods/polariods.module';
 
 @Module({
@@ -17,6 +18,7 @@ import { PolariodsModule } from './polariods/polariods.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(typeORMConfig),
+    LandmarksModule,
     PolariodsModule,
   ],
   controllers: [AppController],
