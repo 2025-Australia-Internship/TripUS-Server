@@ -29,6 +29,10 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @Get('email')
   getEmail(@UserInfo() user: User) {
-    return { email: user.email };
+    return {
+      user_id: user.user_id,
+      email: user.email,
+      created_at: user.created_at,
+    };
   }
 }

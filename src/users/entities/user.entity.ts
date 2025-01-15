@@ -1,5 +1,13 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Polariod } from 'src/polariods/entities/polariod.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -30,6 +38,12 @@ export class User {
 
   @Column('varchar', { length: 100, nullable: true, name: 'status' })
   status: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  'created_at': Date;
+
+  @OneToMany(() => Polariod, (polaroid) => polaroid.user_id)
+  polariods: Polariod[];
 
   @BeforeInsert()
   private beforeInsert() {
