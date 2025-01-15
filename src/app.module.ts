@@ -12,6 +12,7 @@ import { LandmarksModule } from './landmarks/landmarks.module';
 @Module({
   imports: [
     UsersModule,
+    LandmarksModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

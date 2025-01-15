@@ -11,6 +11,6 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: ['dist/**/*.entity.js'],
-  synchronize: true,
+  synchronize: false,
   timezone: 'z', // nestORM utc로 변경
 };

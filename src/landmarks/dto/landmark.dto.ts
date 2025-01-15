@@ -1,13 +1,13 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Point } from 'typeorm';
 
-export class CreateLandmarkDto {
+export class LandmarkDto {
   @IsString()
   @IsNotEmpty({ message: '랜드마크의 이름을 입력하세요' })
   name: string;
 
   @IsNotEmpty({ message: 'Point를 적어주세요' })
-  coordinates: Point;
+  coordinates: string;
 
   @IsNotEmpty({ message: '주소를 적어주세요' })
   address: string;
