@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class PolariodDto {
+export class PolaroidDto {
   @IsString()
   @IsNotEmpty({ message: '사진을 선택해주세요.' })
   photo_url: string;

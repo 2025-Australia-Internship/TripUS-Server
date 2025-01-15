@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Polariod } from 'src/polariods/entities/polariod.entity';
+import { Polaroid } from 'src/polaroids/entities/polaroid.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -42,8 +42,8 @@ export class User {
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
-  @OneToMany(() => Polariod, (polaroid) => polaroid.user_id)
-  polariods: Polariod[];
+  @OneToMany(() => Polaroid, (polaroid) => polaroid.user_id)
+  polaroids: Polaroid[];
 
   @BeforeInsert()
   private beforeInsert() {
