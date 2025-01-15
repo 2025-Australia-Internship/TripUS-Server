@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'polariods' })
-export class Polariod {
+@Entity({ name: 'polaroids' })
+export class Polaroid {
   @PrimaryGeneratedColumn({ name: 'polariod_id' })
   polraiod_id: number;
 
@@ -22,7 +22,7 @@ export class Polariod {
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
-  @ManyToOne(() => User, (user) => user.polariods)
+  @ManyToOne(() => User, (user) => user.polaroids)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'user_id' })
   user_id: User;
 }

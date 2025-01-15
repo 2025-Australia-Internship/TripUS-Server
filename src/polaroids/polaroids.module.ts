@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PolariodsService } from './polariods.service';
-import { PolariodsController } from './polariods.controller';
+import { PolaroidsService } from './polaroids.service';
+import { PolaroidsController } from './polaroids.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Polariod } from './entities/polariod.entity';
+import { Polaroid } from './entities/polaroid.entity';
 
 @Module({
   imports: [
@@ -14,11 +14,11 @@ import { Polariod } from './entities/polariod.entity';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Polariod]),
+    TypeOrmModule.forFeature([Polaroid]),
     // JwtModule.register({}),
   ],
-  controllers: [PolariodsController],
-  providers: [PolariodsService],
-  exports: [PolariodsService],
+  controllers: [PolaroidsController],
+  providers: [PolaroidsService],
+  exports: [PolaroidsService],
 })
-export class PolariodsModule {}
+export class PolaroidsModule {}
