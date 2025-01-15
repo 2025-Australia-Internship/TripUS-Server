@@ -7,6 +7,7 @@ import { typeORMConfig } from './ormconfig';
 import { UsersModule } from './users/users.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtStrategy } from './auth/jwt.strategy';
+import { LandmarksModule } from './landmarks/landmarks.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(typeORMConfig),
+    LandmarksModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtStrategy }],
