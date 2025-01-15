@@ -13,6 +13,7 @@ import { PolariodsModule } from './polariods/polariods.module';
 @Module({
   imports: [
     UsersModule,
+    LandmarksModule,
     PolariodsModule,
     ConfigModule.forRoot({
       isGlobal: true,

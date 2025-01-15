@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Point,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -14,8 +13,8 @@ export class Landmark {
   @Column('varchar', { length: 100, nullable: false, name: 'name' })
   name: string;
 
-  @Column('point', { nullable: false, name: 'coordinates' })
-  coordinates: Point;
+  @Column('text', { nullable: false, name: 'coordinates' })
+  coordinates: string;
 
   @Column('text', { nullable: false, name: 'address' })
   address: string;
@@ -29,9 +28,9 @@ export class Landmark {
   @Column('text', { nullable: false, name: 'description' })
   description: string;
 
-  @Column('number', { name: 'likes' })
+  @Column({ default: 0, name: 'likes' })
   likes: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  'created_at': Date;
+  created_at: Date;
 }
