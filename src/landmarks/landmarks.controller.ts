@@ -17,13 +17,13 @@ export class LandmarksController {
     return this.landmarksService.find();
   }
 
-  @Get(':landmark_id')
-  async findOne(@Param('landmark_id') landmark_id: number) {
-    return this.landmarksService.findOne(landmark_id);
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return this.landmarksService.findOne(id);
   }
 
-  @Delete(':landmark_id')
-  async remove(@Param('landmark_id') landmark_id: number) {
-    return this.landmarksService.remove(landmark_id);
+  @Delete(':id')
+  async remove(@Param('id') id: number) {
+    return this.landmarksService.remove(id);
   }
 }

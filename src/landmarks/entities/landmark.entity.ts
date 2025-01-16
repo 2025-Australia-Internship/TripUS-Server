@@ -7,8 +7,8 @@ import {
 
 @Entity({ name: 'landmarks' })
 export class Landmark {
-  @PrimaryGeneratedColumn({ name: 'landmark_id' })
-  landmark_id: number;
+  @PrimaryGeneratedColumn({ name: 'id' })
+  id: number;
 
   @Column('varchar', { length: 100, nullable: false, name: 'name' })
   name: string;

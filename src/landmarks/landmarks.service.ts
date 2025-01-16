@@ -21,11 +21,11 @@ export class LandmarksService {
     return this.LandmarkRepository.find();
   }
 
-  async findOne(landmark_id: number): Promise<Landmark> {
-    return this.LandmarkRepository.findOneBy({ landmark_id });
+  async findOne(id: number): Promise<Landmark> {
+    return this.LandmarkRepository.findOneBy({ id });
   }
 
-  async remove(landmark_id: number): Promise<void> {
-    await this.LandmarkRepository.delete({ landmark_id });
+  async remove(id: number): Promise<void> {
+    await this.LandmarkRepository.delete({ id });
   }
 }

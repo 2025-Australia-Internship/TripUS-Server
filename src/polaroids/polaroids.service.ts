@@ -9,7 +9,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PolaroidDto } from './dto/polaroid.dto';
 import { User } from 'src/users/entities/user.entity';
-import { Landmark } from '../landmarks/entities/landmark.entity';
 
 @Injectable()
 export class PolaroidsService {
