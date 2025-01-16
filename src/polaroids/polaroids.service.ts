@@ -66,4 +66,61 @@ export class PolaroidsService {
       throw error;
     }
   }
+
+  async update(
+    user: User,
+    id: number,
+    polaroidDto: PolaroidDto,
+  ): Promise<PolaroidDto> {
+    try {
+      const polaroid = await this.polaroidRepository.findOne({
+        where: { id },
+        relations: ['user'],
+      });
+
+      if (!polaroid) {
+        throw new NotFoundException(
+          '해당 id의 폴라로이드 내용은 존재하지 않습니다.',
+        );
+      }
+
+      if (!polaroid.user || polaroid.user.id !== user.id) {
+        throw new ForbiddenException('이 폴라로이드에 접근할 수 없습니다.');
+      }
+      await this.polaroidRepository.update(id, polaroidDto);
+      const updatePolaroid = await this.polaroidRepository.findOne({
+        where: {
+          id,
+        },
+      });
+      return updatePolaroid;
+    } catch (error) {
+      console.error('Polaroid Error : ', error);
+      throw error;
+    }
+  }
+
+  async delete(user: User, id: number) {
+    try {
+      const polaroid = await this.polaroidRepository.findOne({
+        where: { id },
+        relations: ['user'],
+      });
+
+      if (!polaroid) {
+        throw new NotFoundException(
+          '해당 id의 폴라로이드 내용은 존재하지 않습니다.',
+        );
+      }
+
+      if (!polaroid.user || polaroid.user.id !== user.id) {
+        throw new ForbiddenException('이 폴라로이드에 접근할 수 없습니다.');
+      }
+
+      return this.polaroidRepository.delete(id);
+    } catch (error) {
+      console.error('Polaroid Error : ', error);
+      throw error;
+    }
+  }
 }
