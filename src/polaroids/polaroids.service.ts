@@ -1,9 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 import { Polaroid } from './entities/polaroid.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PolaroidDto } from './dto/polaroid.dto';
 import { User } from 'src/users/entities/user.entity';
+import { Landmark } from '../landmarks/entities/landmark.entity';
 
 @Injectable()
 export class PolaroidsService {
@@ -20,22 +26,44 @@ export class PolaroidsService {
     return this.polaroidRepository.save(polaroid);
   }
 
-  findAll(user: User): Promise<Polaroid[]> {
-    return this.polaroidRepository.find({
-      where: { user: { id: user.id } },
-      relations: ['user'],
-    });
+  async findAll(user: User): Promise<Polaroid[]> {
+    try {
+      const polaroid = await this.polaroidRepository.find({
+        where: { user: { id: user.id } },
+        relations: ['user'],
+      });
+
+      if (polaroid.length == 0) {
+        throw new NotFoundException(`폴라로이드가 없습니다`);
+      }
+
+      return polaroid;
+    } catch (error) {
+      console.error('Error finding Polaroid:', error);
+      throw error;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} Polaroid`;
-  }
+  async findOne(user: User, id: number): Promise<Polaroid> {
+    try {
+      const polaroid = await this.polaroidRepository.findOne({
+        where: { id },
+        relations: ['user'],
+      });
 
-  // update(id: number, updatePolaroidDto: UpdatePolaroidDto) {
-  //   return `This action updates a #${id} Polaroid`;
-  // }
+      // 폴라로이드가 존재하지 않을 경우
+      if (!polaroid) {
+        throw new NotFoundException('폴라로이드가 없습니다.');
+      }
 
-  remove(id: number) {
-    return `This action removes a #${id} Polaroid`;
+      // 해당 유저가 소유하지 않은 경우
+      if (!polaroid.user || polaroid.user.id !== user.id) {
+        throw new ForbiddenException('이 폴라로이드에 접근할 수 없습니다.');
+      }
+      return polaroid;
+    } catch (error) {
+      console.error('Error finding Polaroid:', error);
+      throw error;
+    }
   }
 }
