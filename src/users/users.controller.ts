@@ -30,7 +30,7 @@ export class UsersController {
   @Get('email')
   getEmail(@UserInfo() user: User) {
     return {
-      user_id: user.user_id,
+      user_id: user.id,
       email: user.email,
       created_at: user.created_at,
     };

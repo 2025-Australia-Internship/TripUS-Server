@@ -116,7 +116,7 @@ export class UsersService {
       }
 
       const user = await this.usersRepository.findOne({
-        select: ['user_id', 'email', 'password'],
+        select: ['id', 'email', 'password'],
         where: { email },
       });
 
@@ -139,7 +139,7 @@ export class UsersService {
       }
 
       // JWT 토큰 발급
-      const payload = { email, sub: user.user_id };
+      const payload = { email, sub: user.id };
       return {
         access_token: this.JwtService.sign(payload),
       };

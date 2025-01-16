@@ -11,8 +11,8 @@ import { Polaroid } from 'src/polaroids/entities/polaroid.entity';
 
 @Entity({ name: 'users' })
 export class User {
-  @PrimaryGeneratedColumn({ name: 'user_id' })
-  user_id: number;
+  @PrimaryGeneratedColumn({ name: 'id' })
+  id: number;
 
   @Column('varchar', {
     length: 50,
@@ -42,7 +42,7 @@ export class User {
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
-  @OneToMany(() => Polaroid, (polaroid) => polaroid.user_id)
+  @OneToMany(() => Polaroid, (polaroid) => polaroid.user)
   polaroids: Polaroid[];
 
   @BeforeInsert()
