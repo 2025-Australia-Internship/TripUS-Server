@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { PolaroidsService } from './polaroids.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/users/entities/user.entity';
@@ -19,5 +19,11 @@ export class PolaroidsController {
   @Get()
   async findAll(@UserInfo() user: User) {
     return this.polaroidsService.findAll(user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':id')
+  async findOne(@UserInfo() user: User, @Param('id') id: number) {
+    return this.polaroidsService.findOne(user, id);
   }
 }
