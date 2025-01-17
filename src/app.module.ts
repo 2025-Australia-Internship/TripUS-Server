@@ -9,6 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtStrategy } from './auth/jwt.strategy';
 import { LandmarksModule } from './landmarks/landmarks.module';
 import { PolaroidsModule } from './polaroids/polaroids.module';
+import { VisitsModule } from './visits/visits.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PolaroidsModule } from './polaroids/polaroids.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(typeORMConfig),
+    VisitsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtStrategy }],

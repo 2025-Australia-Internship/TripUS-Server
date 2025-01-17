@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Polaroid } from 'src/polaroids/entities/polaroid.entity';
+import { Visit } from 'src/visits/entities/visit.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -44,6 +45,9 @@ export class User {
 
   @OneToMany(() => Polaroid, (polaroid) => polaroid.user)
   polaroids: Polaroid[];
+
+  @OneToMany(() => Visit, (visit) => visit.user)
+  visits: Visit[];
 
   @BeforeInsert()
   private beforeInsert() {
