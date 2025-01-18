@@ -47,18 +47,9 @@ export class UsersService {
         );
       }
 
-      // 이메일
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
       if (!email) {
         throw new BadRequestException(
           'Please write your email. 이메일을 입력해주세요.',
-        );
-      }
-
-      if (!emailRegex.test(email)) {
-        throw new BadRequestException(
-          'Invalid email format. 올바르지 않은 이메일 형식입니다.',
         );
       }
 
