@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Injectable,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 
 import { RegisterDto } from './dto/register.dto';
@@ -25,14 +32,19 @@ export class UsersController {
   async login(@Body() loginDto: LoginDto) {
     return await this.usersService.login(loginDto.email, loginDto.password);
   }
+}
 
+@Controller('user')
+export class UsersInfoController {
+  constructor(readonly UsersService: UsersService) {}
   @UseGuards(AuthGuard('jwt'))
-  @Get('email')
+  @Get('info')
   getEmail(@UserInfo() user: User) {
     return {
-      user_id: user.id,
+      profile_image: user.profile_image,
       email: user.email,
-      created_at: user.created_at,
+      username: user.username,
+      status: user.status,
     };
   }
 }

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UsersController } from './users.controller';
+import { UsersController, UsersInfoController } from './users.controller';
 import { UsersService } from './users.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -18,7 +18,7 @@ import { User } from './entities/user.entity';
     // JwtModule.register({}),
   ],
 
-  controllers: [UsersController],
+  controllers: [UsersController, UsersInfoController],
   providers: [UsersService],
   exports: [UsersService],
 })

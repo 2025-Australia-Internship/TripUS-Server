@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import _ from 'lodash';
 import { compare, hash } from 'bcrypt';
+import { UserInfo } from './utils/userInfo.decorator';
 
 @Injectable()
 export class UsersService {
