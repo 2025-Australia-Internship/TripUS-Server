@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import _ from 'lodash';
 import { compare, hash } from 'bcrypt';
+import { UpdateInfoDto } from './dto/update-info.dto';
 
 @Injectable()
 export class UsersService {
@@ -147,5 +148,38 @@ export class UsersService {
   // email로 사용자 조회
   async findByEmail(email: string) {
     return await this.usersRepository.findOneBy({ email });
+  }
+
+  // 닉네임 중복 확인
+  async checkUsername(newUsername: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: { username: newUsername },
+    });
+
+    return !user; // 사용 가능하면 true, 불가하면 false
+  }
+
+  async update(
+    user: User,
+    updateInfoDto: UpdateInfoDto,
+  ): Promise<UpdateInfoDto> {
+    try {
+      // 닉네임 중복 확인
+      if (updateInfoDto.username) {
+        const isAvailabe = await this.checkUsername(updateInfoDto.username);
+        if (!isAvailabe) {
+          throw new Error('이 닉네임은 이미 존재합니다.');
+        }
+      }
+
+      await this.usersRepository.update(user.id, updateInfoDto);
+      const updateInfo = await this.usersRepository.findOne({
+        where: { id: user.id },
+      });
+      return updateInfo;
+    } catch (error) {
+      console.log('Update user info error : ', error);
+      throw error;
+    }
   }
 }
