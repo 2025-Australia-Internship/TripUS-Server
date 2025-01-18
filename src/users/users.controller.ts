@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Injectable,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 
 import { RegisterDto } from './dto/register.dto';
@@ -13,6 +6,7 @@ import { AuthGuard } from '@nestjs/passport'; // Passport에서 제공하는 Aut
 import { UserInfo } from './utils/userInfo.decorator';
 import { User } from './entities/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { UpdateInfoDto } from './dto/update-info.dto';
 
 @Controller('auth')
 export class UsersController {
@@ -36,15 +30,24 @@ export class UsersController {
 
 @Controller('user')
 export class UsersInfoController {
-  constructor(readonly UsersService: UsersService) {}
+  constructor(readonly usersService: UsersService) {}
+
   @UseGuards(AuthGuard('jwt'))
   @Get('info')
-  getEmail(@UserInfo() user: User) {
+  async userInfo(@UserInfo() user: User) {
     return {
       profile_image: user.profile_image,
       email: user.email,
       username: user.username,
       status: user.status,
     };
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('info')
+  async updateInfo(
+    @UserInfo() user: User,
+    @Body() updateInfoDto: UpdateInfoDto,
+  ) {
+    return this.usersService.update(user, updateInfoDto);
   }
 }
