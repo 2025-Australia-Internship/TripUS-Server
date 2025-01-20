@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -216,15 +218,23 @@ export class UsersService {
     try {
       const visited = this.visitRepository.findOne({
         where: { user: { id: user.id }, landmark: { id: landmark_id } },
+        relations: ['landmark'],
       });
 
       if (!visited) {
-        throw new Error('해당 배경화면을 선택할 수 없습니다.');
+        throw new HttpException(
+          '해당 배경화면을 선택할 수 없습니다.',
+          HttpStatus.FORBIDDEN,
+        );
       }
 
-      const landmark = await this.landmarkRepository.findOne({
-        where: { id: landmark_id },
-      });
+      const landmark = (await visited).landmark;
+      if (!landmark) {
+        throw new HttpException(
+          '방문한 랜드마크의 배경이 아닙니다.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
 
       await this.usersRepository.update(user.id, {
         background_url: landmark.background_image,
@@ -232,7 +242,10 @@ export class UsersService {
 
       return { message: '배경화면이 변경되었습니다.' };
     } catch (error) {
-      console.error('Error : ', error);
+      throw new HttpException(
+        error.message || '배경화면 변경 중 오류가 발생했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
