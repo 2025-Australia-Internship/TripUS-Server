@@ -24,6 +24,9 @@ export class Landmark {
   @Column('varchar', { length: 255, nullable: false, name: 'image' })
   image: string;
 
+  @Column({ name: 'background_image' })
+  background_image: string;
+
   @Column('varchar', { length: 255, nullable: false, name: 'symbol' })
   symbol: string;
 

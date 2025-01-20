@@ -12,6 +12,8 @@ import { JwtService } from '@nestjs/jwt';
 import _ from 'lodash';
 import { compare, hash } from 'bcrypt';
 import { UpdateInfoDto } from './dto/update-info.dto';
+import { Visit } from 'src/visits/entities/visit.entity';
+import { Landmark } from 'src/landmarks/entities/landmark.entity';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +21,12 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private readonly JwtService: JwtService,
+
+    @InjectRepository(Visit)
+    private visitRepository: Repository<Visit>,
+
+    @InjectRepository(Landmark)
+    private landmarkRepository: Repository<Landmark>,
   ) {}
 
   // 회원가입
@@ -180,6 +188,51 @@ export class UsersService {
     } catch (error) {
       console.log('Update user info error : ', error);
       throw error;
+    }
+  }
+
+  // 컬렉션(배경화면) 상태 확인
+  async getCollection(user: User) {
+    try {
+      const landmarks = await this.landmarkRepository.find();
+      const visits = await this.visitRepository.find({
+        where: { user: { id: user.id } },
+        relations: ['landmark'],
+      });
+
+      const visitSet = new Set(visits.map((visit) => visit.landmark.id));
+
+      return landmarks.map((landmark) => ({
+        ...landmark,
+        locked: !visitSet.has(landmark.id),
+      }));
+    } catch (error) {
+      console.error('Error collection: ', error);
+    }
+  }
+
+  // 배경 바꾸기
+  async changeBackground(user: User, landmark_id: number) {
+    try {
+      const visited = this.visitRepository.findOne({
+        where: { user: { id: user.id }, landmark: { id: landmark_id } },
+      });
+
+      if (!visited) {
+        throw new Error('해당 배경화면을 선택할 수 없습니다.');
+      }
+
+      const landmark = await this.landmarkRepository.findOne({
+        where: { id: landmark_id },
+      });
+
+      await this.usersRepository.update(user.id, {
+        background_url: landmark.background_image,
+      });
+
+      return { message: '배경화면이 변경되었습니다.' };
+    } catch (error) {
+      console.error('Error : ', error);
     }
   }
 }
