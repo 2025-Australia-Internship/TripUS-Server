@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 
 import { RegisterDto } from './dto/register.dto';
@@ -42,6 +50,7 @@ export class UsersInfoController {
       status: user.status,
     };
   }
+
   @UseGuards(AuthGuard('jwt'))
   @Patch('info')
   async updateInfo(
@@ -49,5 +58,32 @@ export class UsersInfoController {
     @Body() updateInfoDto: UpdateInfoDto,
   ) {
     return this.usersService.update(user, updateInfoDto);
+  }
+
+  // 콜렉션 불러오기
+  @UseGuards(AuthGuard('jwt'))
+  @Get('collection')
+  async getCollection(@UserInfo() user: User) {
+    try {
+      const collection = await this.usersService.getCollection(user);
+      return { collection };
+    } catch (error) {
+      console.error('Error collection : ', error);
+      throw error;
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('background')
+  async changeBackground(
+    @UserInfo() user: User,
+    @Body('landmark_id') landmark_id: number,
+  ) {
+    try {
+      return await this.usersService.changeBackground(user, landmark_id);
+    } catch (error) {
+      console.error('Error can not change background : ', error);
+      throw error;
+    }
   }
 }

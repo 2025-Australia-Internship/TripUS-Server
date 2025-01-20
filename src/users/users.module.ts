@@ -5,6 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { Landmark } from 'src/landmarks/entities/landmark.entity';
+import { Visit } from 'src/visits/entities/visit.entity';
 
 @Module({
   imports: [
@@ -14,7 +16,7 @@ import { User } from './entities/user.entity';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Landmark, Visit]),
     // JwtModule.register({}),
   ],
 

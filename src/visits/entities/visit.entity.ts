@@ -16,7 +16,9 @@ export class Visit {
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
 
-  @ManyToOne(() => User, (user) => user.visits)
+  @ManyToOne(() => User, (user) => user.visits, {
+    onDelete: 'CASCADE', // 연결된 필드가 삭제되면 같이 삭제됨
+  })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 

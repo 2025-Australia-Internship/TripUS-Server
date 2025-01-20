@@ -3,12 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Polaroid } from 'src/polaroids/entities/polaroid.entity';
 import { Visit } from 'src/visits/entities/visit.entity';
+import { Landmark } from 'src/landmarks/entities/landmark.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -36,6 +39,13 @@ export class User {
 
   @Column('varchar', { length: 255, nullable: true, name: 'profile_image' })
   profile_image: string;
+
+  @OneToOne(() => Landmark, { nullable: true })
+  @JoinColumn({
+    name: 'background_url',
+    referencedColumnName: 'background_image',
+  })
+  background_url: string;
 
   @Column('varchar', { length: 100, nullable: true, name: 'status' })
   status: string;
