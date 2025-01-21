@@ -21,13 +21,13 @@ export class Landmark {
   @Column('text', { nullable: false, name: 'address' })
   address: string;
 
-  @Column('varchar', { length: 255, nullable: false, name: 'image' })
+  @Column('blob', { nullable: false, name: 'image' })
   image: string;
 
-  @Column({ name: 'background_image' })
+  @Column('blob', { name: 'background_image' })
   background_image: string;
 
-  @Column('varchar', { length: 255, nullable: false, name: 'symbol' })
+  @Column('blob', { nullable: false, name: 'symbol' })
   symbol: string;
 
   @Column('text', { nullable: false, name: 'description' })
