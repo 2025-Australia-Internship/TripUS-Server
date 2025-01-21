@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -28,6 +30,30 @@ export class UsersController {
       registerDto.password,
       registerDto.profile_image,
     );
+  }
+
+  @Post('check-username')
+  async checkUsername(
+    @Body('username') username: string,
+  ): Promise<{ isAvailable: boolean }> {
+    if (!username) {
+      throw new BadRequestException('user name is already exsit');
+    }
+
+    const isAvailable = await this.usersService.checkUsername(username);
+    return { isAvailable };
+  }
+
+  @Post('check-email')
+  async checkUserEmail(
+    @Body('email') email: string,
+  ): Promise<{ isAvailable: boolean }> {
+    if (!email) {
+      throw new BadRequestException('user email is already exsit');
+    }
+
+    const isAvailable = await this.usersService.checkEmail(email);
+    return { isAvailable };
   }
 
   @Post('login')

@@ -160,13 +160,29 @@ export class UsersService {
     return await this.usersRepository.findOneBy({ email });
   }
 
-  // 닉네임 중복 확인
-  async checkUsername(newUsername: string): Promise<boolean> {
-    const user = await this.usersRepository.findOne({
-      where: { username: newUsername },
-    });
+  // 이메일 또는 닉네임 중복 확인
+  private async checkAvailability(
+    field: string,
+    value: string,
+  ): Promise<boolean> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { [field]: value },
+      });
+      return !user; // 사용 가능하면 true, 불가하면 false
+    } catch (error) {
+      throw new Error(
+        `Failed to check ${field} availability: ${error.message}`,
+      );
+    }
+  }
 
-    return !user; // 사용 가능하면 true, 불가하면 false
+  async checkUsername(newUsername: string): Promise<boolean> {
+    return this.checkAvailability('username', newUsername.toLowerCase());
+  }
+
+  async checkEmail(newUserEmail: string): Promise<boolean> {
+    return this.checkAvailability('email', newUserEmail.toLowerCase());
   }
 
   async update(
@@ -178,7 +194,7 @@ export class UsersService {
       if (updateInfoDto.username) {
         const isAvailabe = await this.checkUsername(updateInfoDto.username);
         if (!isAvailabe) {
-          throw new Error('이 닉네임은 이미 존재합니다.');
+          throw new Error('Username is already exsit');
         }
       }
 
