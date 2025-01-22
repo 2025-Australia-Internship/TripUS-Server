@@ -109,43 +109,44 @@ export class UsersService {
 
   // 로그인
   async login(email: string, password: string) {
+    if (!email) {
+      throw new BadRequestException(
+        'Please write your email. 이메일을 입력해주세요.',
+      );
+    }
+
+    const user = await this.usersRepository.findOne({
+      select: ['id', 'email', 'password'],
+      where: { email },
+    });
+
+    if (_.isNil(user)) {
+      throw new UnauthorizedException(
+        'There are no auth matching your email or password. 이메일 또는 비밀번호가 일치하는 인증 정보가 없습니다.',
+      );
+    }
+
+    if (!password) {
+      throw new BadRequestException(
+        'Please write your password. 비밀번호를 입력해주세요.',
+      );
+    }
+
+    if (!(await compare(password, user.password))) {
+      throw new UnauthorizedException(
+        'There are no info matching your email or password., 이메일 또는 비밀번호가 일치하는 정보가 없습니다.',
+      );
+    }
+
     try {
-      if (!email) {
-        throw new BadRequestException(
-          'Please write your email. 이메일을 입력해주세요.',
-        );
-      }
-
-      const user = await this.usersRepository.findOne({
-        select: ['id', 'email', 'password'],
-        where: { email },
-      });
-
-      if (_.isNil(user)) {
-        throw new UnauthorizedException(
-          'There are no auth matching your email or password. 이메일 또는 비밀번호가 일치하는 인증 정보가 없습니다.',
-        );
-      }
-
-      if (!password) {
-        throw new BadRequestException(
-          'Please write your password. 비밀번호를 입력해주세요.',
-        );
-      }
-
-      if (!(await compare(password, user.password))) {
-        throw new UnauthorizedException(
-          'There are no info matching your email or password., 이메일 또는 비밀번호가 일치하는 정보가 없습니다.',
-        );
-      }
-
       // JWT 토큰 발급
       const payload = { email, sub: user.id };
       return {
         access_token: this.JwtService.sign(payload),
       };
     } catch (error) {
-      throw new InternalServerErrorException('예상치 못한 에러 발생!');
+      console.error('Login error:', error);
+      throw new InternalServerErrorException('Failed to login');
     }
   }
 
