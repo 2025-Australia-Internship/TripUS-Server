@@ -1,6 +1,8 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class RegisterDto {
+  profile_image: string;
+
   @IsString()
   @IsNotEmpty({ message: 'Please write your Nickname. 닉네임을 입력해주세요.' })
   username: string;
@@ -14,6 +16,4 @@ export class RegisterDto {
     message: 'Please write your password. 비밀번호를 입력해주세요.',
   })
   password: string;
-
-  profile_image: string;
 }

@@ -38,61 +38,61 @@ export class UsersService {
     password: string,
     profile_image: string,
   ) {
+    // 닉네임 (유저네임)
+    if (!username) {
+      throw new BadRequestException(
+        'Please write your nickname. 닉네임을 입력해주세요.',
+      );
+    }
+
+    // if (!usernameRegex.test(username)) {
+    //   throw new BadRequestException(
+    //     'Invalid nickname format. 올바르지 않은 닉네임 형식입니다.',
+    //   );
+    // }
+
+    const existingUsername = await this.findByUsername(username);
+    if (existingUsername) {
+      throw new ConflictException(
+        'Nickname already exists. 이미 존재하는 닉네임입니다.',
+      );
+    }
+
+    if (!email) {
+      throw new BadRequestException(
+        'Please write your email. 이메일을 입력해주세요.',
+      );
+    }
+
+    const existingUser = await this.findByEmail(email);
+    if (existingUser) {
+      throw new ConflictException(
+        'Email already exists. 이미 존재하는 이메일입니다.',
+      );
+    }
+
+    // 비밀번호
+    const pwRegex = /^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*()._-]{6,16}$/;
+
+    if (!password) {
+      throw new BadRequestException(
+        'Please write your password. 비밀번호를 입력해주세요.',
+      );
+    }
+
+    if (!pwRegex.test(password)) {
+      throw new BadRequestException(
+        'Invalid password format. 올바르지 않은 비밀번호 형식입니다.',
+      );
+    }
+
+    if (password.length < 8) {
+      throw new BadRequestException(
+        'Password must be at least 8 characters long. 비밀번호는 최소 8자 이상이어야 합니다.',
+      );
+    }
+
     try {
-      // 닉네임 (유저네임)
-      if (!username) {
-        throw new BadRequestException(
-          'Please write your nickname. 닉네임을 입력해주세요.',
-        );
-      }
-
-      // if (!usernameRegex.test(username)) {
-      //   throw new BadRequestException(
-      //     'Invalid nickname format. 올바르지 않은 닉네임 형식입니다.',
-      //   );
-      // }
-      const existingUsername = await this.findByUsername(username);
-      if (existingUsername) {
-        throw new ConflictException(
-          'Nickname already exists. 이미 존재하는 닉네임입니다.',
-        );
-      }
-
-      if (!email) {
-        throw new BadRequestException(
-          'Please write your email. 이메일을 입력해주세요.',
-        );
-      }
-
-      const existingUser = await this.findByEmail(email);
-      if (existingUser) {
-        throw new ConflictException(
-          'Email already exists. 이미 존재하는 이메일입니다.',
-        );
-      }
-
-      // 비밀번호
-      const pwRegex =
-        /^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*()._-]{6,16}$/;
-
-      if (!pwRegex.test(password)) {
-        throw new BadRequestException(
-          'Invalid password format. 올바르지 않은 비밀번호 형식입니다.',
-        );
-      }
-
-      if (!password) {
-        throw new BadRequestException(
-          'Please write your password. 비밀번호를 입력해주세요.',
-        );
-      }
-
-      if (password.length < 8) {
-        throw new BadRequestException(
-          'Password must be at least 8 characters long. 비밀번호는 최소 8자 이상이어야 합니다.',
-        );
-      }
-
       // 비밀번호 해싱 및 저장
       const hashedPassword = await hash(password, 10);
       await this.usersRepository.save({
@@ -102,9 +102,8 @@ export class UsersService {
         profile_image,
       });
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Internal Server Error. 서버 내부 오류입니다.',
-      );
+      console.error('Registration error:', error);
+      throw new InternalServerErrorException('Failed to create user.');
     }
   }
 

@@ -13,7 +13,7 @@ export class Polaroid {
   @PrimaryGeneratedColumn({ name: 'id' })
   id: number;
 
-  @Column({ name: 'photo_url', nullable: false })
+  @Column('longtext', { name: 'photo_url', nullable: false })
   photo_url: string;
 
   @Column('varchar', { length: 255, name: 'color' })

@@ -7,4 +7,6 @@ export class PolaroidDto {
 
   @IsString()
   caption: string;
+
+  color: string;
 }

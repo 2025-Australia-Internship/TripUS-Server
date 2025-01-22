@@ -13,7 +13,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/users/entities/user.entity';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
 import { PolaroidDto } from './dto/polaroid.dto';
-import { number } from 'joi';
 
 @Controller('polaroids')
 export class PolaroidsController {
