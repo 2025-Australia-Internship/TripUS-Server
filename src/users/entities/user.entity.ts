@@ -37,7 +37,7 @@ export class User {
   @Column('varchar', { length: 255, nullable: false, name: 'password' })
   password: string;
 
-  @Column('blob', { nullable: true, name: 'profile_image' })
+  @Column({ nullable: true, name: 'profile_image' })
   profile_image: string;
 
   @OneToOne(() => Landmark, { nullable: true })
