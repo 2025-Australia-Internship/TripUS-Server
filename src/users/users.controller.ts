@@ -27,6 +27,11 @@ export class UsersController {
     return await this.usersService.register(registerDto);
   }
 
+  @Post('login')
+  async regiloginster(@Body() loginDto: LoginDto) {
+    return await this.usersService.login(loginDto);
+  }
+
   @Post('check-availability')
   async checkAvailability(
     @Body() body: { field: 'username' | 'email'; value: string },
