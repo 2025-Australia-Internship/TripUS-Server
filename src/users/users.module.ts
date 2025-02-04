@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Landmark } from 'src/landmarks/entities/landmark.entity';
 import { Visit } from 'src/visits/entities/visit.entity';
+import { ResponseStrategy } from 'src/shared/response.strategy';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { Visit } from 'src/visits/entities/visit.entity';
   ],
 
   controllers: [UsersController, UsersInfoController],
-  providers: [UsersService],
+  providers: [UsersService, ResponseStrategy],
   exports: [UsersService],
 })
 export class UsersModule {}

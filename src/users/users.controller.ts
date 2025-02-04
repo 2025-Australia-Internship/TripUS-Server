@@ -24,92 +24,59 @@ export class UsersController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
-    return await this.usersService.register(
-      registerDto.username,
-      registerDto.email,
-      registerDto.password,
-      registerDto.profile_image,
-    );
+    return await this.usersService.register(registerDto);
   }
 
-  @Post('check-username')
-  async checkUsername(
-    @Body('username') username: string,
+  @Post('check-availability')
+  async checkAvailability(
+    @Body() body: { field: 'username' | 'email'; value: string },
   ): Promise<{ isAvailable: boolean }> {
-    if (!username) {
-      throw new BadRequestException('user name is already exsit');
-    }
-
-    const isAvailable = await this.usersService.checkUsername(username);
+    const { field, value } = body;
+    const isAvailable = await this.usersService.checkAvailability(field, value);
     return { isAvailable };
-  }
-
-  @Post('check-email')
-  async checkUserEmail(
-    @Body('email') email: string,
-  ): Promise<{ isAvailable: boolean }> {
-    if (!email) {
-      throw new BadRequestException('user email is already exsit');
-    }
-
-    const isAvailable = await this.usersService.checkEmail(email);
-    return { isAvailable };
-  }
-
-  @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    return await this.usersService.login(loginDto.email, loginDto.password);
   }
 }
 
 @Controller('user')
+@UseGuards(AuthGuard('jwt'))
 export class UsersInfoController {
   constructor(readonly usersService: UsersService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('info')
-  async userInfo(@UserInfo() user: User) {
-    return {
-      profile_image: user.profile_image,
-      email: user.email,
-      username: user.username,
-      status: user.status,
-    };
+  async findOne(@UserInfo('id') userId: number) {
+    return this.usersService.findOne(userId);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch('info')
   async updateInfo(
-    @UserInfo() user: User,
+    @UserInfo('id') userId: number,
     @Body() updateInfoDto: UpdateInfoDto,
   ) {
-    return this.usersService.update(user, updateInfoDto);
+    return this.usersService.update(userId, updateInfoDto);
   }
 
-  // 콜렉션 불러오기
-  @UseGuards(AuthGuard('jwt'))
-  @Get('collection')
-  async getCollection(@UserInfo() user: User) {
-    try {
-      const collection = await this.usersService.getCollection(user);
-      return { collection };
-    } catch (error) {
-      console.error('Error collection : ', error);
-      throw error;
-    }
-  }
+  // // 콜렉션 불러오기
+  // @Get('collection')
+  // async getCollection(@UserInfo() user: User) {
+  //   try {
+  //     const collection = await this.usersService.getCollection(user);
+  //     return { collection };
+  //   } catch (error) {
+  //     console.error('Error collection : ', error);
+  //     throw error;
+  //   }
+  // }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Patch('background')
-  async changeBackground(
-    @UserInfo() user: User,
-    @Body('landmark_id') landmark_id: number,
-  ) {
-    try {
-      return await this.usersService.changeBackground(user, landmark_id);
-    } catch (error) {
-      console.error('Error can not change background : ', error);
-      throw error;
-    }
-  }
+  // @Patch('background')
+  // async changeBackground(
+  //   @UserInfo() user: User,
+  //   @Body('landmark_id') landmark_id: number,
+  // ) {
+  //   try {
+  //     return await this.usersService.changeBackground(user, landmark_id);
+  //   } catch (error) {
+  //     console.error('Error can not change background : ', error);
+  //     throw error;
+  //   }
+  // }
 }
