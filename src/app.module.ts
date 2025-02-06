@@ -10,6 +10,7 @@ import { JwtStrategy } from './auth/jwt.strategy';
 import { LandmarksModule } from './landmarks/landmarks.module';
 import { PolaroidsModule } from './polaroids/polaroids.module';
 import { VisitsModule } from './visits/visits.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { VisitsModule } from './visits/visits.module';
     }),
     TypeOrmModule.forRoot(typeORMConfig),
     VisitsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtStrategy }],
