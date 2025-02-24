@@ -8,7 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { ResponseStrategy } from 'src/shared/response.strategy';
 
 @Module({
   imports: [
@@ -23,7 +22,7 @@ import { ResponseStrategy } from 'src/shared/response.strategy';
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [JwtStrategy, PassportModule, AuthService, ResponseStrategy],
+  providers: [JwtStrategy, PassportModule, AuthService],
   exports: [AuthService],
 })
 export class AuthModule {}

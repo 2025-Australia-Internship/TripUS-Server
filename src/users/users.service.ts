@@ -4,9 +4,9 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import _ from 'lodash';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterDto } from '../auth/dto/register.dto';
 import { ResponseStrategy } from 'src/shared/response.strategy';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto } from '../auth/dto/login.dto';
 import { UpdateInfoDto } from './dto/update-info.dto';
 
 @Injectable()
@@ -17,8 +17,12 @@ export class UsersService {
     private responseStrategy: ResponseStrategy,
   ) {}
 
-  async findByEmail(email: string) {
+  async findUserByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
+  }
+
+  async findUserByUsername(username: string) {
+    return await this.userRepository.findOneBy({ username });
   }
 
   async findOne(userId: number) {

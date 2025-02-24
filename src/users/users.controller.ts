@@ -27,10 +27,10 @@ export class UsersController {
 
   @Patch('info')
   async updateInfo(
-    @UserInfo('id') userId: number,
+    @UserInfo('id') id: number,
     @Body() updateInfoDto: UpdateInfoDto,
   ) {
-    return this.usersService.update(userId, updateInfoDto);
+    return this.usersService.update(id, updateInfoDto);
   }
 
   // // 콜렉션 불러오기

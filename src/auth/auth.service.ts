@@ -1,22 +1,45 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import { ResponseStrategy } from 'src/shared/response.strategy';
-import { LoginDto } from 'src/users/dto/login.dto';
-import { RegisterDto } from 'src/users/dto/register.dto';
+import { LoginDto } from 'src/auth/dto/login.dto';
+import { RegisterDto } from 'src/auth/dto/register.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import {
+  BadRequestException,
+  HttpStatus,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private responseStrategy: ResponseStrategy,
+    private userService: UsersService,
     private readonly JwtService: JwtService,
   ) {}
+
   // 회원가입
   async register(registerDto: RegisterDto) {
     try {
+      const existingUserByEmail = await this.userService.findUserByEmail(
+        registerDto.email,
+      );
+      if (existingUserByEmail) {
+        throw new BadRequestException('Email is already in use.');
+      }
+
+      const existingUserByUsername = await this.userService.findUserByUsername(
+        registerDto.username,
+      );
+
+      if (existingUserByUsername) {
+        throw new BadRequestException('Username is already in use.');
+      }
+
       const hashedPassword = await hash(registerDto.password, 10);
 
       const newUser = {
@@ -24,12 +47,15 @@ export class AuthService {
         password: hashedPassword,
       };
       await this.userRepository.save(newUser);
-      return this.responseStrategy.success(
-        'User created successfully',
-        newUser,
-      );
-    } catch (error) {
-      return this.responseStrategy.error('Failed to create user', error);
+      return {
+        status: HttpStatus.CREATED,
+        message: 'User created successfully',
+        data: newUser,
+      };
+    } catch (e) {
+      if (e instanceof BadRequestException) {
+      }
+      throw new InternalServerErrorException('Failed to create user');
     }
   }
 
@@ -42,49 +68,32 @@ export class AuthService {
       });
 
       if (!user) {
-        return this.responseStrategy.notFound('User not found');
+        throw new NotFoundException('User not found.');
       }
 
       const isPasswordVaild = await compare(loginDto.password, user.password);
       if (!isPasswordVaild) {
-        return this.responseStrategy.error('Invaild credentials', null);
+        throw new UnauthorizedException('Password is incorrect.');
       }
 
       // JWT 토큰 발급
       const payload = { email: user.email, sub: user.id };
       const access_token = this.JwtService.sign(payload);
 
-      return this.responseStrategy.success('Login successfully', access_token);
-    } catch (error) {
-      return this.responseStrategy.error('Failed to login', error);
-    }
-  }
-
-  // 이메일 또는 닉네임 중복 확인
-  async checkAvailability(
-    field: 'username' | 'email',
-    value: string,
-  ): Promise<boolean> {
-    try {
-      if (field === 'username') {
-        return await this.checkUsername(value);
-      } else if (field === 'email') {
-        return await this.checkEmail(value);
-      } else {
-        return this.responseStrategy.error(`Already existing ${field}`);
+      return {
+        status: HttpStatus.OK,
+        message: 'Login successfully',
+        data: user,
+        access_token: access_token,
+      };
+    } catch (e) {
+      if (
+        e instanceof NotFoundException ||
+        e instanceof UnauthorizedException
+      ) {
+        throw e;
       }
-    } catch (error) {
-      return this.responseStrategy.error('Failed to check availability');
+      throw new InternalServerErrorException('Failed to login.');
     }
-  }
-
-  private async checkUsername(username: string): Promise<boolean> {
-    const user = await this.userRepository.findOneBy({ username });
-    return !user;
-  }
-
-  private async checkEmail(email: string): Promise<boolean> {
-    const user = await this.userRepository.findOneBy({ email });
-    return !user;
   }
 }
