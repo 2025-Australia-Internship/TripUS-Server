@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpStatus,
   Injectable,
   InternalServerErrorException,
@@ -56,10 +57,15 @@ export class UsersService {
   async update(id: number, updateInfoDto: UpdateInfoDto) {
     try {
       const user = await this.userRepository.findOneBy({ id });
-
       if (!user) {
         throw new NotFoundException('User not found.');
       }
+
+      const username = await this.findUserByUsername(updateInfoDto.username);
+      if (username) {
+        throw new BadRequestException('Username is already in use.');
+      }
+
       await this.userRepository.update(id, updateInfoDto);
 
       const updatedUser = await this.userRepository.findOneBy({
@@ -72,7 +78,7 @@ export class UsersService {
         data: updatedUser,
       };
     } catch (e) {
-      if (e instanceof NotFoundException) {
+      if (e instanceof NotFoundException || e instanceof BadRequestException) {
         throw e;
       }
       throw new InternalServerErrorException('Failed to user update.');
