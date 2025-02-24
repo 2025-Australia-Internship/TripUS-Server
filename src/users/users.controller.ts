@@ -3,10 +3,7 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Patch,
-  Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -21,8 +18,8 @@ export class UsersController {
   constructor(readonly usersService: UsersService) {}
 
   @Get('info')
-  async findOne(@UserInfo('id') userId: number) {
-    return this.usersService.findOne(userId);
+  async findOne(@UserInfo('id') id: number) {
+    return this.usersService.findOne(id);
   }
 
   @Patch('info')

@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
 import _ from 'lodash';
-import { RegisterDto } from '../auth/dto/register.dto';
-import { ResponseStrategy } from 'src/shared/response.strategy';
-import { LoginDto } from '../auth/dto/login.dto';
 import { UpdateInfoDto } from './dto/update-info.dto';
 
 @Injectable()
@@ -14,7 +15,6 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private responseStrategy: ResponseStrategy,
   ) {}
 
   async findUserByEmail(email: string) {
@@ -25,14 +25,12 @@ export class UsersService {
     return await this.userRepository.findOneBy({ username });
   }
 
-  async findOne(userId: number) {
+  async findOne(id: number) {
     try {
-      const user = await this.userRepository.findOne({
-        where: { id: userId },
-      });
+      const user = await this.userRepository.findOneBy({ id });
 
       if (!user) {
-        return this.responseStrategy.notFound('User not found');
+        throw new NotFoundException('User not found.');
       }
 
       const userInfo = {
@@ -42,34 +40,42 @@ export class UsersService {
         status: user.status,
       };
 
-      return this.responseStrategy.success(
-        'User retrieved successfully',
-        userInfo,
-      );
-    } catch (error) {
-      return this.responseStrategy.error('Failed to retrieve user', error);
+      return {
+        status: HttpStatus.OK,
+        message: 'User retrieved successfully.',
+        data: userInfo,
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to retrieve user');
     }
   }
 
-  async update(userId: number, updateInfoDto: UpdateInfoDto) {
+  async update(id: number, updateInfoDto: UpdateInfoDto) {
     try {
-      const user = await this.userRepository.findOne({ where: { id: userId } });
+      const user = await this.userRepository.findOneBy({ id });
 
       if (!user) {
-        return this.responseStrategy.notFound('User not found');
+        throw new NotFoundException('User not found.');
       }
-      await this.userRepository.update(userId, updateInfoDto);
+      await this.userRepository.update(id, updateInfoDto);
 
-      const updatedUser = await this.userRepository.findOne({
-        where: { id: userId },
+      const updatedUser = await this.userRepository.findOneBy({
+        id,
       });
 
-      return this.responseStrategy.success(
-        'User updated successfully',
-        updatedUser,
-      );
-    } catch (error) {
-      return this.responseStrategy.error('Failed to update user', error);
+      return {
+        status: HttpStatus.OK,
+        message: 'User updated successfully.',
+        data: updatedUser,
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to user update.');
     }
   }
 
