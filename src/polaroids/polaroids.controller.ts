@@ -12,43 +12,48 @@ import { PolaroidsService } from './polaroids.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/users/entities/user.entity';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
-import { PolaroidDto } from './dto/polaroid.dto';
+import { CreatePolaroidDto } from './dto/create-polaroid.dto';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('polaroids')
 export class PolaroidsController {
   constructor(private readonly polaroidsService: PolaroidsService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
-  async create(@UserInfo() user: User, @Body() polaroidDto: PolaroidDto) {
-    return this.polaroidsService.create(user, polaroidDto);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Get()
-  async findAll(@UserInfo() user: User) {
-    return this.polaroidsService.findAll(user);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Get(':id')
-  async findOne(@UserInfo() user: User, @Param('id') id: number) {
-    return this.polaroidsService.findOne(user, id);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Patch(':id')
-  async update(
-    @UserInfo() user: User,
-    @Param('id') id: number,
-    @Body() polaroidDto: PolaroidDto,
+  async create(
+    @UserInfo('id') id: number,
+    @Body() createPolaroidDto: CreatePolaroidDto,
   ) {
-    return this.polaroidsService.update(user, id, polaroidDto);
+    return this.polaroidsService.create(id, createPolaroidDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Delete(':id')
-  async delete(@UserInfo() user: User, @Param('id') id: number) {
-    return this.polaroidsService.delete(user, id);
+  @Get()
+  async findAll(@UserInfo('id') id: number) {
+    return this.polaroidsService.findAll(id);
   }
+
+  // @Get(':polaroid_id')
+  // async findOne(
+  //   @UserInfo('id') id: number,
+  //   @Param('polaroid_id') polaroid_id: number,
+  // ) {
+  //   return this.polaroidsService.findOne(id, polaroid_id);
+  // }
+
+  // @Patch(':polaroid_id')
+  // async update(
+  //   @UserInfo('id') id: number,
+  //   @Param('polaroid_id') polaroid_id: number,
+  //   @Body() polaroidDto: PolaroidDto,
+  // ) {
+  //   return this.polaroidsService.update(id, polaroid_id, polaroidDto);
+  // }
+
+  // @Delete(':polaroid_id')
+  // async delete(
+  //   @UserInfo('id') id: number,
+  //   @Param('polaroid_id') polaroid_id: number,
+  // ) {
+  //   return this.polaroidsService.delete(id, polaroid_id);
+  // }
 }
