@@ -8,7 +8,7 @@ import {
 import { Polaroid } from './entities/polaroid.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreatePolaroidDto } from './dto/create-polaroid.dto';
+import { PolaroidDto } from './dto/polaroid.dto';
 import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
@@ -18,10 +18,10 @@ export class PolaroidsService {
     private polaroidRepository: Repository<Polaroid>,
   ) {}
 
-  async create(id: number, createPolaroidDto: CreatePolaroidDto) {
+  async create(id: number, polaroidDto: PolaroidDto) {
     try {
       const polaroid = {
-        ...createPolaroidDto,
+        ...polaroidDto,
         user: { id },
       };
 
@@ -83,60 +83,59 @@ export class PolaroidsService {
     }
   }
 
-  // async update(
-  //   user: User,
-  //   id: number,
-  //   polaroidDto: PolaroidDto,
-  // ): Promise<PolaroidDto> {
-  //   try {
-  //     const polaroid = await this.polaroidRepository.findOne({
-  //       where: { id },
-  //       relations: ['user'],
-  //     });
+  async update(id: number, polaroid_id: number, polaroidDto: PolaroidDto) {
+    try {
+      const polaroid = await this.polaroidRepository.findOne({
+        where: { id: polaroid_id, user: { id } },
+      });
 
-  //     if (!polaroid) {
-  //       throw new NotFoundException(
-  //         '해당 id의 폴라로이드 내용은 존재하지 않습니다.',
-  //       );
-  //     }
+      if (!polaroid) {
+        throw new NotFoundException('Polaroid not found');
+      }
 
-  //     if (!polaroid.user || polaroid.user.id !== user.id) {
-  //       throw new ForbiddenException('이 폴라로이드에 접근할 수 없습니다.');
-  //     }
-  //     await this.polaroidRepository.update(id, polaroidDto);
-  //     const updatePolaroid = await this.polaroidRepository.findOne({
-  //       where: {
-  //         id,
-  //       },
-  //     });
-  //     return updatePolaroid;
-  //   } catch (error) {
-  //     console.error('Polaroid Error : ', error);
-  //     throw error;
-  //   }
-  // }
+      await this.polaroidRepository.update(polaroid_id, polaroidDto);
+      const updatedPolaroid = await this.polaroidRepository.findOne({
+        where: {
+          id: polaroid_id,
+          user: { id },
+        },
+      });
 
-  // async delete(user: User, id: number) {
-  //   try {
-  //     const polaroid = await this.polaroidRepository.findOne({
-  //       where: { id },
-  //       relations: ['user'],
-  //     });
+      return {
+        status: HttpStatus.OK,
+        message: 'Polaroid updated successfully',
+        data: updatedPolaroid,
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to update polaroid');
+    }
+  }
 
-  //     if (!polaroid) {
-  //       throw new NotFoundException(
-  //         '해당 id의 폴라로이드 내용은 존재하지 않습니다.',
-  //       );
-  //     }
+  async delete(id: number, polaroid_id: number) {
+    try {
+      const polaroid = await this.polaroidRepository.findOne({
+        where: { id: polaroid_id, user: { id } },
+        relations: ['user'],
+      });
 
-  //     if (!polaroid.user || polaroid.user.id !== user.id) {
-  //       throw new ForbiddenException('이 폴라로이드에 접근할 수 없습니다.');
-  //     }
+      if (!polaroid) {
+        throw new NotFoundException('Polaroid not found');
+      }
 
-  //     return this.polaroidRepository.delete(id);
-  //   } catch (error) {
-  //     console.error('Polaroid Error : ', error);
-  //     throw error;
-  //   }
-  // }
+      await this.polaroidRepository.remove(polaroid);
+
+      return {
+        status: HttpStatus.OK,
+        message: 'Polaroid deleted successfully',
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to delete polaroid');
+    }
+  }
 }
