@@ -3,21 +3,21 @@ import { Point } from 'typeorm';
 
 export class LandmarkDto {
   @IsString()
-  @IsNotEmpty({ message: '랜드마크의 이름을 입력하세요' })
+  @IsNotEmpty()
   name: string;
 
-  @IsNotEmpty({ message: 'Point를 적어주세요' })
+  @IsNotEmpty()
   coordinates: string;
 
-  @IsNotEmpty({ message: '주소를 적어주세요' })
+  @IsNotEmpty()
   address: string;
 
-  @IsNotEmpty({ message: '이미지를 등록해주세요' })
+  @IsNotEmpty()
   image: string;
 
-  @IsNotEmpty({ message: '심볼을 등록해주세요' })
+  @IsNotEmpty()
   symbol: string;
 
-  @IsNotEmpty({ message: '설명을 적어주세요' })
+  @IsNotEmpty()
   description: string;
 }

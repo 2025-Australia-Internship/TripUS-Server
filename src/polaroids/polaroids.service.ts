@@ -1,9 +1,7 @@
 import {
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { Polaroid } from './entities/polaroid.entity';
 import { Repository } from 'typeorm';

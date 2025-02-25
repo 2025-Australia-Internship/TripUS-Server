@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Landmark } from './entities/landmark.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,21 +16,78 @@ export class LandmarksService {
     private LandmarkRepository: Repository<Landmark>,
   ) {}
 
-  async create(landmarkDto: LandmarkDto): Promise<Landmark> {
-    const landmark = this.LandmarkRepository.create(landmarkDto);
-    return this.LandmarkRepository.save(landmark);
+  async create(landmarkDto: LandmarkDto) {
+    try {
+      const landmark = this.LandmarkRepository.create(landmarkDto);
+      await this.LandmarkRepository.save(landmark);
+
+      return {
+        status: HttpStatus.CREATED,
+        message: 'Landmark created successfully',
+        data: landmark,
+      };
+    } catch (e) {
+      throw new InternalServerErrorException('Failed to create landmark');
+    }
   }
 
-  // 모든 랜드마크 조회
-  async find(): Promise<Landmark[]> {
-    return this.LandmarkRepository.find();
+  async find() {
+    try {
+      const landmarks = this.LandmarkRepository.find();
+
+      if (!landmarks) {
+        throw new NotFoundException('Landmarks not found');
+      }
+
+      return {
+        status: HttpStatus.CREATED,
+        message: 'Landmark retrieved successfully',
+        data: landmarks,
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException)
+        throw new InternalServerErrorException('Failed to retrieve landmark');
+    }
   }
 
-  async findOne(id: number): Promise<Landmark> {
-    return this.LandmarkRepository.findOneBy({ id });
+  async findOne(id: number) {
+    try {
+      const landmark = this.LandmarkRepository.findOneBy({ id });
+
+      if (!landmark) {
+        throw new NotFoundException('Landmarks not found');
+      }
+
+      return {
+        status: HttpStatus.CREATED,
+        message: 'Landmark retrieved successfully',
+        data: landmark,
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException)
+        throw new InternalServerErrorException('Failed to retrieve landmark');
+    }
   }
 
-  async remove(id: number): Promise<void> {
-    await this.LandmarkRepository.delete({ id });
+  async remove(id: number) {
+    try {
+      const landmark = this.LandmarkRepository.findOneBy({ id });
+
+      if (!landmark) {
+        throw new NotFoundException('Landmarks not found');
+      }
+
+      await this.LandmarkRepository.delete(id);
+
+      return {
+        status: HttpStatus.CREATED,
+        message: 'Landmark created successfully',
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to create landmark');
+    }
   }
 }
