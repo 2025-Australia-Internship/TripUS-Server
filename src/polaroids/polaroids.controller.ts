@@ -32,13 +32,13 @@ export class PolaroidsController {
     return this.polaroidsService.findAll(id);
   }
 
-  // @Get(':polaroid_id')
-  // async findOne(
-  //   @UserInfo('id') id: number,
-  //   @Param('polaroid_id') polaroid_id: number,
-  // ) {
-  //   return this.polaroidsService.findOne(id, polaroid_id);
-  // }
+  @Get(':polaroid_id')
+  async findOne(
+    @UserInfo('id') id: number,
+    @Param('polaroid_id') polaroid_id: number,
+  ) {
+    return this.polaroidsService.findOne(id, polaroid_id);
+  }
 
   // @Patch(':polaroid_id')
   // async update(

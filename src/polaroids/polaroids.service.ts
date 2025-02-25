@@ -9,7 +9,6 @@ import { Polaroid } from './entities/polaroid.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePolaroidDto } from './dto/create-polaroid.dto';
-import { User } from 'src/users/entities/user.entity';
 import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
@@ -41,38 +40,48 @@ export class PolaroidsService {
   async findAll(id: number) {
     try {
       const polaroid = await this.polaroidRepository.find({
-        where: { user: { id: id } },
+        where: { user: { id } },
       });
 
-      return polaroid;
-    } catch (error) {
-      console.error('Error finding Polaroid:', error);
-      throw error;
+      if (!polaroid) {
+        throw new NotFoundException('Polaroids not found');
+      }
+
+      return {
+        status: HttpStatus.OK,
+        message: 'Polaroids retrieved successfully',
+        data: polaroid,
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to retrieve polaroids');
     }
   }
 
-  // async findOne(id: number): Promise<Polaroid> {
-  //   try {
-  //     const polaroid = await this.polaroidRepository.findOne({
-  //       where: { id },
-  //       relations: ['user'],
-  //     });
+  async findOne(id: number, polaroid_id: number) {
+    try {
+      const polaroid = await this.polaroidRepository.findOne({
+        where: { id: polaroid_id, user: { id } },
+      });
 
-  //     // 폴라로이드가 존재하지 않을 경우
-  //     if (!polaroid) {
-  //       throw new NotFoundException('폴라로이드가 없습니다.');
-  //     }
+      if (!polaroid) {
+        throw new NotFoundException('Polaroid not found');
+      }
 
-  //     // 해당 유저가 소유하지 않은 경우
-  //     if (!polaroid.user || polaroid.user.id !== user.id) {
-  //       throw new ForbiddenException('이 폴라로이드에 접근할 수 없습니다.');
-  //     }
-  //     return polaroid;
-  //   } catch (error) {
-  //     console.error('Error finding Polaroid:', error);
-  //     throw error;
-  //   }
-  // }
+      return {
+        status: HttpStatus.OK,
+        message: 'Polaroid retrieved successfully',
+        data: polaroid,
+      };
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to retrieve polaroid');
+    }
+  }
 
   // async update(
   //   user: User,

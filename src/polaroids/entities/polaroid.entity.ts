@@ -25,7 +25,7 @@ export class Polaroid {
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
-  @ManyToOne(() => User, (user) => user.polaroids)
+  @ManyToOne(() => User, (user) => user.polaroids, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 }
