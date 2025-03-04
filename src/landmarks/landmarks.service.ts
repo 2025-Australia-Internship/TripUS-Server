@@ -18,7 +18,7 @@ export class LandmarksService {
 
   async create(landmarkDto: LandmarkDto) {
     try {
-      const landmark = this.LandmarkRepository.create(landmarkDto);
+      const landmark = await this.LandmarkRepository.create(landmarkDto);
       await this.LandmarkRepository.save(landmark);
 
       return {
@@ -33,14 +33,14 @@ export class LandmarksService {
 
   async find() {
     try {
-      const landmarks = this.LandmarkRepository.find();
+      const landmarks = await this.LandmarkRepository.find();
 
       if (!landmarks) {
         throw new NotFoundException('Landmarks not found');
       }
 
       return {
-        status: HttpStatus.CREATED,
+        status: HttpStatus.OK,
         message: 'Landmark retrieved successfully',
         data: landmarks,
       };
@@ -52,14 +52,14 @@ export class LandmarksService {
 
   async findOne(id: number) {
     try {
-      const landmark = this.LandmarkRepository.findOneBy({ id });
+      const landmark = await this.LandmarkRepository.findOneBy({ id });
 
       if (!landmark) {
         throw new NotFoundException('Landmarks not found');
       }
 
       return {
-        status: HttpStatus.CREATED,
+        status: HttpStatus.OK,
         message: 'Landmark retrieved successfully',
         data: landmark,
       };
@@ -71,7 +71,7 @@ export class LandmarksService {
 
   async remove(id: number) {
     try {
-      const landmark = this.LandmarkRepository.findOneBy({ id });
+      const landmark = await this.LandmarkRepository.findOneBy({ id });
 
       if (!landmark) {
         throw new NotFoundException('Landmarks not found');

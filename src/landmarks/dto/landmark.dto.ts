@@ -1,5 +1,4 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { Point } from 'typeorm';
 
 export class LandmarkDto {
   @IsString()
@@ -14,6 +13,9 @@ export class LandmarkDto {
 
   @IsNotEmpty()
   image: string;
+
+  @IsNotEmpty()
+  background_image: string;
 
   @IsNotEmpty()
   symbol: string;
