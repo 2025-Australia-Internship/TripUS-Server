@@ -13,6 +13,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { STATUS_CODES } from 'http';
 
 export class AuthService {
   constructor(
@@ -23,7 +24,7 @@ export class AuthService {
   ) {}
 
   // 회원가입
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: RegisterDto): Promise<Object> {
     try {
       const existingUserByEmail = await this.userService.findUserByEmail(
         registerDto.email,
@@ -54,13 +55,14 @@ export class AuthService {
       };
     } catch (e) {
       if (e instanceof BadRequestException) {
+        throw e;
       }
-      throw new InternalServerErrorException('Failed to create user');
+      throw new InternalServerErrorException(`Failed to create user : ${e}`);
     }
   }
 
   // 로그인
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto): Promise<Object> {
     try {
       const user = await this.userRepository.findOne({
         select: ['id', 'email', 'password'],
@@ -93,7 +95,7 @@ export class AuthService {
       ) {
         throw e;
       }
-      throw new InternalServerErrorException('Failed to login.');
+      throw new InternalServerErrorException(`Failed to login : ${e}`);
     }
   }
 }

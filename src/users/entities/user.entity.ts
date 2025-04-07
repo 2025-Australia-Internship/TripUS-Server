@@ -24,7 +24,7 @@ export class User {
     unique: true,
     name: 'username',
   })
-  username: string;
+  username?: string;
 
   @Column('varchar', {
     length: 255,
