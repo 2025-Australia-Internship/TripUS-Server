@@ -61,9 +61,11 @@ export class UsersService {
         throw new NotFoundException('User not found.');
       }
 
-      const username = await this.findUserByUsername(updateInfoDto.username);
-      if (username) {
-        throw new BadRequestException('Username is already in use.');
+      if (updateInfoDto.username) {
+        const username = await this.findUserByUsername(updateInfoDto.username);
+        if (username && username.id !== id) {
+          throw new BadRequestException('Username is already in use.');
+        }
       }
 
       await this.userRepository.update(id, updateInfoDto);
@@ -78,6 +80,7 @@ export class UsersService {
         data: updatedUser,
       };
     } catch (e) {
+      console.log(e);
       if (e instanceof NotFoundException || e instanceof BadRequestException) {
         throw e;
       }
