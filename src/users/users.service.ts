@@ -18,11 +18,11 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findUserByEmail(email: string) {
+  async findUserByEmail(email: string): Promise<User> {
     return await this.userRepository.findOneBy({ email });
   }
 
-  async findUserByUsername(username: string) {
+  async findUserByUsername(username: string): Promise<User> {
     return await this.userRepository.findOneBy({ username });
   }
 
@@ -84,7 +84,25 @@ export class UsersService {
       if (e instanceof NotFoundException || e instanceof BadRequestException) {
         throw e;
       }
-      throw new InternalServerErrorException('Failed to user update.');
+      throw new InternalServerErrorException('Failed to update user.');
+    }
+  }
+
+  async deleteAccount(id: number) {
+    try {
+      const user = await this.userRepository.findOneBy({ id });
+      if (!user) {
+        throw new NotFoundException('User not found.');
+      }
+
+      await this.userRepository.delete(id);
+
+      return {
+        status: HttpStatus.OK,
+        message: 'User delete successfully',
+      };
+    } catch (e) {
+      throw new InternalServerErrorException('Failed to delete user.');
     }
   }
 

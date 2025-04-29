@@ -1,11 +1,18 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 
 import { AuthGuard } from '@nestjs/passport'; // Passport에서 제공하는 AuthGuard를 가져옴
 import { UserInfo } from './utils/userInfo.decorator';
 import { UpdateInfoDto } from './dto/update-info.dto';
 
-@Controller('api/user')
+@Controller('api/users')
 @UseGuards(AuthGuard('jwt'))
 export class UsersController {
   constructor(readonly usersService: UsersService) {}
@@ -21,6 +28,11 @@ export class UsersController {
     @Body() updateInfoDto: UpdateInfoDto,
   ) {
     return this.usersService.update(id, updateInfoDto);
+  }
+
+  @Delete()
+  async deleteAccount(@UserInfo('id') id: number) {
+    return this.usersService.deleteAccount(id);
   }
 
   // // 콜렉션 불러오기
