@@ -1,9 +1,7 @@
-import { Visit } from 'src/visits/entities/visit.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -38,7 +36,4 @@ export class Landmark {
 
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
-
-  @OneToMany(() => Visit, (visit) => visit.landmark)
-  visits: Visit[];
 }

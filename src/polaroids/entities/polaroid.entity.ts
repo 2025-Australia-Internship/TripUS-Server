@@ -27,5 +27,5 @@ export class Polaroid {
 
   @ManyToOne(() => User, (user) => user.polaroids, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user: User;
+  user_id: User;
 }

@@ -38,7 +38,7 @@ export class UsersService {
         username: user.username,
         email: user.email,
         profile_image: user.profile_image,
-        status: user.status,
+        status: user.status_message,
       };
 
       return {

@@ -38,7 +38,7 @@ export class PolaroidsService {
   async findAll(id: number) {
     try {
       const polaroid = await this.polaroidRepository.find({
-        where: { user: { id } },
+        where: { user_id: { id } },
       });
 
       if (!polaroid) {
@@ -61,7 +61,7 @@ export class PolaroidsService {
   async findOne(id: number, polaroid_id: number) {
     try {
       const polaroid = await this.polaroidRepository.findOne({
-        where: { id: polaroid_id, user: { id } },
+        where: { id: polaroid_id, user_id: { id } },
       });
 
       if (!polaroid) {
@@ -84,7 +84,7 @@ export class PolaroidsService {
   async update(id: number, polaroid_id: number, polaroidDto: PolaroidDto) {
     try {
       const polaroid = await this.polaroidRepository.findOne({
-        where: { id: polaroid_id, user: { id } },
+        where: { id: polaroid_id, user_id: { id } },
       });
 
       if (!polaroid) {
@@ -95,7 +95,7 @@ export class PolaroidsService {
       const updatedPolaroid = await this.polaroidRepository.findOne({
         where: {
           id: polaroid_id,
-          user: { id },
+          user_id: { id },
         },
       });
 
@@ -115,7 +115,7 @@ export class PolaroidsService {
   async delete(id: number, polaroid_id: number) {
     try {
       const polaroid = await this.polaroidRepository.findOne({
-        where: { id: polaroid_id, user: { id } },
+        where: { id: polaroid_id, user_id: { id } },
         relations: ['user'],
       });
 

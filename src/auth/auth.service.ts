@@ -13,7 +13,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { STATUS_CODES } from 'http';
 
 export class AuthService {
   constructor(
@@ -33,25 +32,52 @@ export class AuthService {
         throw new BadRequestException('Email is already in use.');
       }
 
-      const existingUserByUsername = await this.userService.findUserByUsername(
+      const newUser = await this.userRepository.save(registerDto);
+
+      // 순차적으로 로그인하기 위해 토큰 발급
+      const payload = { email: newUser.email, sub: newUser.id };
+      const access_token = this.JwtService.sign(payload);
+
+      return {
+        status: HttpStatus.CREATED,
+        message: 'User created successfully',
+        data: newUser,
+        access_token: access_token,
+      };
+    } catch (e) {
+      if (e instanceof BadRequestException) {
+        throw e;
+      }
+      throw new InternalServerErrorException(`Failed to create user : ${e}`);
+    }
+  }
+
+  async completeRegister(
+    id: number,
+    registerDto: RegisterDto,
+  ): Promise<Object> {
+    try {
+      const existingUsername = await this.userService.findUserByUsername(
         registerDto.username,
       );
-
-      if (existingUserByUsername) {
+      if (existingUsername) {
         throw new BadRequestException('Username is already in use.');
       }
 
       const hashedPassword = await hash(registerDto.password, 10);
 
-      const newUser = {
+      const userInfo = {
         ...registerDto,
         password: hashedPassword,
       };
-      await this.userRepository.save(newUser);
+
+      await this.userRepository.update(id, userInfo);
+      const complateUser = await this.userRepository.findOneBy({ id });
+
       return {
-        status: HttpStatus.CREATED,
+        status: HttpStatus.OK,
         message: 'User created successfully',
-        data: newUser,
+        data: complateUser,
       };
     } catch (e) {
       if (e instanceof BadRequestException) {

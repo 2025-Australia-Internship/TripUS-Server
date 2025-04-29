@@ -3,15 +3,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Polaroid } from 'src/polaroids/entities/polaroid.entity';
-import { Visit } from 'src/visits/entities/visit.entity';
-import { Landmark } from 'src/landmarks/entities/landmark.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -20,8 +16,8 @@ export class User {
 
   @Column('varchar', {
     length: 50,
-    nullable: false,
     unique: true,
+    nullable: true,
     name: 'username',
   })
   username?: string;
@@ -34,30 +30,20 @@ export class User {
   })
   email: string;
 
-  @Column('varchar', { length: 255, nullable: false, name: 'password' })
-  password: string;
+  @Column('varchar', { length: 255, nullable: true, name: 'password' })
+  password?: string;
 
   @Column('longtext', { nullable: true, name: 'profile_image' })
-  profile_image: string;
-
-  @OneToOne(() => Landmark, { nullable: true })
-  @JoinColumn({
-    name: 'background_url',
-    referencedColumnName: 'background_image',
-  })
-  background_url: string;
+  profile_image?: string;
 
   @Column('varchar', { length: 100, nullable: true, name: 'status' })
-  status: string;
+  status_message?: string;
 
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
-  @OneToMany(() => Polaroid, (polaroid) => polaroid.user)
-  polaroids: Polaroid[];
-
-  @OneToMany(() => Visit, (visit) => visit.user)
-  visits: Visit[];
+  @OneToMany(() => Polaroid, (polaroid) => polaroid.user_id)
+  polaroids?: Polaroid[];
 
   @BeforeInsert()
   private beforeInsert() {
