@@ -1,8 +1,8 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class PolaroidDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   photo_url: string;
 
   @IsString()

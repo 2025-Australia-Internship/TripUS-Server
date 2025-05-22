@@ -1,7 +1,9 @@
+import { Polaroid } from 'src/polaroids/entities/polaroid.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -36,4 +38,7 @@ export class Landmark {
 
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
+
+  @OneToMany(() => Polaroid, (polaroid) => polaroid.landmark_id)
+  polaroids?: Polaroid[];
 }

@@ -26,26 +26,14 @@ export class UsersService {
     return await this.userRepository.findOneBy({ username });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<User> {
     try {
       const user = await this.userRepository.findOneBy({ id });
-
       if (!user) {
         throw new NotFoundException('User not found.');
       }
 
-      const userInfo = {
-        username: user.username,
-        email: user.email,
-        profile_image: user.profile_image,
-        status: user.status_message,
-      };
-
-      return {
-        status: HttpStatus.OK,
-        message: 'User retrieved successfully.',
-        data: userInfo,
-      };
+      return user;
     } catch (e) {
       if (e instanceof NotFoundException) {
         throw e;
@@ -54,7 +42,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateInfoDto: UpdateInfoDto) {
+  async update(id: number, updateInfoDto: UpdateInfoDto): Promise<User> {
     try {
       const user = await this.userRepository.findOneBy({ id });
       if (!user) {
@@ -70,15 +58,9 @@ export class UsersService {
 
       await this.userRepository.update(id, updateInfoDto);
 
-      const updatedUser = await this.userRepository.findOneBy({
+      return await this.userRepository.findOneBy({
         id,
       });
-
-      return {
-        status: HttpStatus.OK,
-        message: 'User updated successfully.',
-        data: updatedUser,
-      };
     } catch (e) {
       console.log(e);
       if (e instanceof NotFoundException || e instanceof BadRequestException) {
@@ -95,12 +77,7 @@ export class UsersService {
         throw new NotFoundException('User not found.');
       }
 
-      await this.userRepository.delete(id);
-
-      return {
-        status: HttpStatus.OK,
-        message: 'User delete successfully',
-      };
+      return await this.userRepository.delete(id);
     } catch (e) {
       throw new InternalServerErrorException('Failed to delete user.');
     }

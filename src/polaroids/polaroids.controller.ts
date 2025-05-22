@@ -12,15 +12,16 @@ import { PolaroidsService } from './polaroids.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
 import { PolaroidDto } from './dto/polaroid.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @UseGuards(AuthGuard('jwt'))
-@Controller('polaroids')
+@Controller('api/polaroids')
 export class PolaroidsController {
   constructor(private readonly polaroidsService: PolaroidsService) {}
 
   @Post()
-  async create(@UserInfo('id') id: number, @Body() polaroidDto: PolaroidDto) {
-    return this.polaroidsService.create(id, polaroidDto);
+  async create(@UserInfo() user: User, @Body() polaroidDto: PolaroidDto) {
+    return this.polaroidsService.create(user, polaroidDto);
   }
 
   @Get()

@@ -1,3 +1,4 @@
+import { Landmark } from 'src/landmarks/entities/landmark.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -25,7 +26,21 @@ export class Polaroid {
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
+  // 객체 관계
   @ManyToOne(() => User, (user) => user.polaroids, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user_id: User;
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  // id 값
+  @Column()
+  user_id: number;
+
+  @ManyToOne(() => Landmark, (landmark) => landmark.polaroids, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'landmark_id' })
+  landmark?: Landmark;
+
+  @Column({ nullable: true })
+  landmark_id?: number;
 }

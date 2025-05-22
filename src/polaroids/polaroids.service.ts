@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PolaroidDto } from './dto/polaroid.dto';
 import { HttpStatus } from '@nestjs/common';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class PolaroidsService {
@@ -16,75 +17,51 @@ export class PolaroidsService {
     private polaroidRepository: Repository<Polaroid>,
   ) {}
 
-  async create(id: number, polaroidDto: PolaroidDto) {
+  async create(user: User, polaroidDto: PolaroidDto): Promise<Polaroid> {
     try {
       const polaroid = {
         ...polaroidDto,
-        user: { id },
+        user,
+        user_id: user.id,
       };
 
-      await this.polaroidRepository.save(polaroid);
-
-      return {
-        status: HttpStatus.CREATED,
-        message: 'Polaroid created successfully',
-        data: polaroid,
-      };
+      return await this.polaroidRepository.save(polaroid);
     } catch (e) {
       throw new InternalServerErrorException('Failed to create polaroid');
     }
   }
 
-  async findAll(id: number) {
+  async findAll(user_id: number): Promise<Polaroid[] | null> {
     try {
-      const polaroid = await this.polaroidRepository.find({
-        where: { user_id: { id } },
+      return await this.polaroidRepository.find({
+        where: { user_id },
       });
-
-      if (!polaroid) {
-        throw new NotFoundException('Polaroids not found');
-      }
-
-      return {
-        status: HttpStatus.OK,
-        message: 'Polaroids retrieved successfully',
-        data: polaroid,
-      };
     } catch (e) {
-      if (e instanceof NotFoundException) {
-        throw e;
-      }
       throw new InternalServerErrorException('Failed to retrieve polaroids');
     }
   }
 
-  async findOne(id: number, polaroid_id: number) {
+  async findOne(
+    user_id: number,
+    polaroid_id: number,
+  ): Promise<Polaroid | null> {
     try {
-      const polaroid = await this.polaroidRepository.findOne({
-        where: { id: polaroid_id, user_id: { id } },
+      return await this.polaroidRepository.findOne({
+        where: { id: polaroid_id, user_id },
       });
-
-      if (!polaroid) {
-        throw new NotFoundException('Polaroid not found');
-      }
-
-      return {
-        status: HttpStatus.OK,
-        message: 'Polaroid retrieved successfully',
-        data: polaroid,
-      };
     } catch (e) {
-      if (e instanceof NotFoundException) {
-        throw e;
-      }
       throw new InternalServerErrorException('Failed to retrieve polaroid');
     }
   }
 
-  async update(id: number, polaroid_id: number, polaroidDto: PolaroidDto) {
+  async update(
+    user_id: number,
+    polaroid_id: number,
+    polaroidDto: PolaroidDto,
+  ): Promise<Polaroid> {
     try {
       const polaroid = await this.polaroidRepository.findOne({
-        where: { id: polaroid_id, user_id: { id } },
+        where: { id: polaroid_id, user_id },
       });
 
       if (!polaroid) {
@@ -92,18 +69,12 @@ export class PolaroidsService {
       }
 
       await this.polaroidRepository.update(polaroid_id, polaroidDto);
-      const updatedPolaroid = await this.polaroidRepository.findOne({
+      return await this.polaroidRepository.findOne({
         where: {
           id: polaroid_id,
-          user_id: { id },
+          user_id,
         },
       });
-
-      return {
-        status: HttpStatus.OK,
-        message: 'Polaroid updated successfully',
-        data: updatedPolaroid,
-      };
     } catch (e) {
       if (e instanceof NotFoundException) {
         throw e;
@@ -112,10 +83,10 @@ export class PolaroidsService {
     }
   }
 
-  async delete(id: number, polaroid_id: number) {
+  async delete(user_id: number, polaroid_id: number) {
     try {
       const polaroid = await this.polaroidRepository.findOne({
-        where: { id: polaroid_id, user_id: { id } },
+        where: { id: polaroid_id, user_id },
         relations: ['user'],
       });
 
@@ -123,12 +94,7 @@ export class PolaroidsService {
         throw new NotFoundException('Polaroid not found');
       }
 
-      await this.polaroidRepository.remove(polaroid);
-
-      return {
-        status: HttpStatus.OK,
-        message: 'Polaroid deleted successfully',
-      };
+      return await this.polaroidRepository.remove(polaroid);
     } catch (e) {
       if (e instanceof NotFoundException) {
         throw e;

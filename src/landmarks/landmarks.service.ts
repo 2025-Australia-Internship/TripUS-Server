@@ -16,73 +16,39 @@ export class LandmarksService {
     private LandmarkRepository: Repository<Landmark>,
   ) {}
 
-  async create(landmarkDto: LandmarkDto) {
+  async create(landmarkDto: LandmarkDto): Promise<Landmark> {
     try {
       const landmark = await this.LandmarkRepository.create(landmarkDto);
-      await this.LandmarkRepository.save(landmark);
-
-      return {
-        status: HttpStatus.CREATED,
-        message: 'Landmark created successfully',
-        data: landmark,
-      };
+      return await this.LandmarkRepository.save(landmark);
     } catch (e) {
       throw new InternalServerErrorException('Failed to create landmark');
     }
   }
 
-  async find() {
+  async find(): Promise<Landmark[] | null> {
     try {
-      const landmarks = await this.LandmarkRepository.find();
-
-      if (!landmarks) {
-        throw new NotFoundException('Landmarks not found');
-      }
-
-      return {
-        status: HttpStatus.OK,
-        message: 'Landmark retrieved successfully',
-        data: landmarks,
-      };
+      return await this.LandmarkRepository.find();
     } catch (e) {
-      if (e instanceof NotFoundException)
-        throw new InternalServerErrorException('Failed to retrieve landmark');
+      throw new InternalServerErrorException('Failed to retrieve landmark');
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Landmark | null> {
     try {
-      const landmark = await this.LandmarkRepository.findOneBy({ id });
-
-      if (!landmark) {
-        throw new NotFoundException('Landmarks not found');
-      }
-
-      return {
-        status: HttpStatus.OK,
-        message: 'Landmark retrieved successfully',
-        data: landmark,
-      };
+      return await this.LandmarkRepository.findOneBy({ id });
     } catch (e) {
-      if (e instanceof NotFoundException)
-        throw new InternalServerErrorException('Failed to retrieve landmark');
+      throw new InternalServerErrorException('Failed to retrieve landmark');
     }
   }
 
   async remove(id: number) {
     try {
       const landmark = await this.LandmarkRepository.findOneBy({ id });
-
       if (!landmark) {
         throw new NotFoundException('Landmarks not found');
       }
 
-      await this.LandmarkRepository.delete(id);
-
-      return {
-        status: HttpStatus.CREATED,
-        message: 'Landmark created successfully',
-      };
+      return await this.LandmarkRepository.delete(id);
     } catch (e) {
       if (e instanceof NotFoundException) {
         throw e;
