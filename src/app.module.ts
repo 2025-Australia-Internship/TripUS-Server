@@ -10,12 +10,14 @@ import { JwtStrategy } from './auth/jwt.strategy';
 import { LandmarksModule } from './landmarks/landmarks.module';
 import { PolaroidsModule } from './polaroids/polaroids.module';
 import { AuthModule } from './auth/auth.module';
+import { VisionModule } from './vision_ai/vision.module';
 
 @Module({
   imports: [
     UsersModule,
     LandmarksModule,
     PolaroidsModule,
+    VisionModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
