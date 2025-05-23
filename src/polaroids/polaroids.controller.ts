@@ -11,8 +11,8 @@ import {
 import { PolaroidsService } from './polaroids.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
-import { PolaroidDto } from './dto/polaroid.dto';
 import { User } from 'src/users/entities/user.entity';
+import { CreatePolaroidDto } from './dto/create-polaroid.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('api/polaroids')
@@ -20,8 +20,11 @@ export class PolaroidsController {
   constructor(private readonly polaroidsService: PolaroidsService) {}
 
   @Post()
-  async create(@UserInfo() user: User, @Body() polaroidDto: PolaroidDto) {
-    return this.polaroidsService.create(user, polaroidDto);
+  async create(
+    @UserInfo() user: User,
+    @Body() createPolaroidDto: CreatePolaroidDto,
+  ) {
+    return this.polaroidsService.create(user, createPolaroidDto);
   }
 
   @Get()
@@ -37,14 +40,14 @@ export class PolaroidsController {
     return this.polaroidsService.findOne(id, polaroid_id);
   }
 
-  @Patch(':polaroid_id')
-  async update(
-    @UserInfo('id') id: number,
-    @Param('polaroid_id') polaroid_id: number,
-    @Body() polaroidDto: PolaroidDto,
-  ) {
-    return this.polaroidsService.update(id, polaroid_id, polaroidDto);
-  }
+  // @Patch(':polaroid_id')
+  // async update(
+  //   @UserInfo('id') id: number,
+  //   @Param('polaroid_id') polaroid_id: number,
+  //   @Body() polaroidDto: PolaroidDto,
+  // ) {
+  //   return this.polaroidsService.update(id, polaroid_id, polaroidDto);
+  // }
 
   @Delete(':polaroid_id')
   async delete(

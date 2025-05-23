@@ -6,23 +6,32 @@ import {
 import { Polaroid } from './entities/polaroid.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PolaroidDto } from './dto/polaroid.dto';
-import { HttpStatus } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
+import { CreatePolaroidDto } from './dto/create-polaroid.dto';
+import { LandmarksService } from 'src/landmarks/landmarks.service';
 
 @Injectable()
 export class PolaroidsService {
   constructor(
     @InjectRepository(Polaroid)
     private polaroidRepository: Repository<Polaroid>,
+    private LandmarkService: LandmarksService,
   ) {}
 
-  async create(user: User, polaroidDto: PolaroidDto): Promise<Polaroid> {
+  async create(
+    user: User,
+    createPolaroidDto: CreatePolaroidDto,
+  ): Promise<Polaroid> {
     try {
+      const landmark = await this.LandmarkService.findOne(
+        createPolaroidDto.landmark_id,
+      );
+
       const polaroid = {
-        ...polaroidDto,
+        ...createPolaroidDto,
         user,
         user_id: user.id,
+        landmark,
       };
 
       return await this.polaroidRepository.save(polaroid);
@@ -54,34 +63,34 @@ export class PolaroidsService {
     }
   }
 
-  async update(
-    user_id: number,
-    polaroid_id: number,
-    polaroidDto: PolaroidDto,
-  ): Promise<Polaroid> {
-    try {
-      const polaroid = await this.polaroidRepository.findOne({
-        where: { id: polaroid_id, user_id },
-      });
+  // async update(
+  //   user_id: number,
+  //   polaroid_id: number,
+  //   polaroidDto: PolaroidDto,
+  // ): Promise<Polaroid> {
+  //   try {
+  //     const polaroid = await this.polaroidRepository.findOne({
+  //       where: { id: polaroid_id, user_id },
+  //     });
 
-      if (!polaroid) {
-        throw new NotFoundException('Polaroid not found');
-      }
+  //     if (!polaroid) {
+  //       throw new NotFoundException('Polaroid not found');
+  //     }
 
-      await this.polaroidRepository.update(polaroid_id, polaroidDto);
-      return await this.polaroidRepository.findOne({
-        where: {
-          id: polaroid_id,
-          user_id,
-        },
-      });
-    } catch (e) {
-      if (e instanceof NotFoundException) {
-        throw e;
-      }
-      throw new InternalServerErrorException('Failed to update polaroid');
-    }
-  }
+  //     await this.polaroidRepository.update(polaroid_id, polaroidDto);
+  //     return await this.polaroidRepository.findOne({
+  //       where: {
+  //         id: polaroid_id,
+  //         user_id,
+  //       },
+  //     });
+  //   } catch (e) {
+  //     if (e instanceof NotFoundException) {
+  //       throw e;
+  //     }
+  //     throw new InternalServerErrorException('Failed to update polaroid');
+  //   }
+  // }
 
   async delete(user_id: number, polaroid_id: number) {
     try {

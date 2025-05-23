@@ -23,6 +23,9 @@ export class Polaroid {
   @Column('text', { name: 'caption' })
   caption: string;
 
+  @Column('boolean', { name: 'is_opened', default: false })
+  is_opened: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
