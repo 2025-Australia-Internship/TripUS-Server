@@ -28,12 +28,12 @@ export class VisionService {
 
       const detectedLandmark = result.landmarkAnnotations || []; // Vision이 인식한 랜드마크 목록 또는 []
       console.log('detectedLandmark : ', detectedLandmark);
-      if (detectedLandmark.length === 0) return null;
+      if (!detectedLandmark.length || !detectedLandmark[0].description)
+        return null;
 
       const preprocessedName = this.preprocessingName(
         detectedLandmark[0].description,
       );
-      console.log('preprocessedName : ', preprocessedName);
       const landmarks = await this.landmarkService.find();
 
       for (const landmark of landmarks) {
