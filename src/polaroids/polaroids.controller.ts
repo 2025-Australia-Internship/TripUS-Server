@@ -13,6 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { CreatePolaroidDto } from './dto/create-polaroid.dto';
+import { UpdatePolaroidDto } from './dto/update-polaroid.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('api/polaroids')
@@ -40,14 +41,14 @@ export class PolaroidsController {
     return this.polaroidsService.findOne(id, polaroid_id);
   }
 
-  // @Patch(':polaroid_id')
-  // async update(
-  //   @UserInfo('id') id: number,
-  //   @Param('polaroid_id') polaroid_id: number,
-  //   @Body() polaroidDto: PolaroidDto,
-  // ) {
-  //   return this.polaroidsService.update(id, polaroid_id, polaroidDto);
-  // }
+  @Patch(':polaroid_id')
+  async update(
+    @UserInfo('id') id: number,
+    @Param('polaroid_id') polaroid_id: number,
+    @Body() updatePolaroidDto: UpdatePolaroidDto,
+  ) {
+    return this.polaroidsService.update(id, polaroid_id, updatePolaroidDto);
+  }
 
   @Delete(':polaroid_id')
   async delete(

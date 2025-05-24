@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { CreatePolaroidDto } from './dto/create-polaroid.dto';
 import { LandmarksService } from 'src/landmarks/landmarks.service';
+import { UpdatePolaroidDto } from './dto/update-polaroid.dto';
 
 @Injectable()
 export class PolaroidsService {
@@ -63,34 +64,34 @@ export class PolaroidsService {
     }
   }
 
-  // async update(
-  //   user_id: number,
-  //   polaroid_id: number,
-  //   polaroidDto: PolaroidDto,
-  // ): Promise<Polaroid> {
-  //   try {
-  //     const polaroid = await this.polaroidRepository.findOne({
-  //       where: { id: polaroid_id, user_id },
-  //     });
+  async update(
+    user_id: number,
+    polaroid_id: number,
+    updatePolaroidDto: UpdatePolaroidDto,
+  ): Promise<Polaroid> {
+    try {
+      const polaroid = await this.polaroidRepository.findOne({
+        where: { id: polaroid_id, user_id },
+      });
 
-  //     if (!polaroid) {
-  //       throw new NotFoundException('Polaroid not found');
-  //     }
+      if (!polaroid) {
+        throw new NotFoundException('Polaroid not found');
+      }
 
-  //     await this.polaroidRepository.update(polaroid_id, polaroidDto);
-  //     return await this.polaroidRepository.findOne({
-  //       where: {
-  //         id: polaroid_id,
-  //         user_id,
-  //       },
-  //     });
-  //   } catch (e) {
-  //     if (e instanceof NotFoundException) {
-  //       throw e;
-  //     }
-  //     throw new InternalServerErrorException('Failed to update polaroid');
-  //   }
-  // }
+      await this.polaroidRepository.update(polaroid_id, updatePolaroidDto);
+      return await this.polaroidRepository.findOne({
+        where: {
+          id: polaroid_id,
+          user_id,
+        },
+      });
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to update polaroid');
+    }
+  }
 
   async delete(user_id: number, polaroid_id: number) {
     try {
