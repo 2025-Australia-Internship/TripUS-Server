@@ -28,6 +28,11 @@ export class PolaroidsController {
     return this.polaroidsService.create(user, createPolaroidDto);
   }
 
+  @Get('counts')
+  async counts(@UserInfo('id') id: number) {
+    return this.polaroidsService.polaroidCounts(id);
+  }
+
   @Get()
   async findAll(@UserInfo('id') id: number) {
     return this.polaroidsService.findAll(id);

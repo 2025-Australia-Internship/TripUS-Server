@@ -41,7 +41,7 @@ export class PolaroidsService {
     }
   }
 
-  async findAll(user_id: number): Promise<Polaroid[] | null> {
+  async findAll(user_id: number): Promise<Polaroid[]> {
     try {
       return await this.polaroidRepository.find({
         where: { user_id },
@@ -111,5 +111,10 @@ export class PolaroidsService {
       }
       throw new InternalServerErrorException('Failed to delete polaroid');
     }
+  }
+
+  async polaroidCounts(user_id: number): Promise<number> {
+    const polaroid = await this.findAll(user_id);
+    return polaroid.length;
   }
 }
