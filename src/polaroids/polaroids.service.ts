@@ -143,4 +143,15 @@ export class PolaroidsService {
       );
     }
   }
+
+  async landmarkPolaroidCounts(
+    user_id: number,
+    landmark_id: number,
+  ): Promise<number> {
+    const landmarkPolaroids = await this.findLandmarkPolaroid(
+      user_id,
+      landmark_id,
+    );
+    return landmarkPolaroids.length;
+  }
 }
