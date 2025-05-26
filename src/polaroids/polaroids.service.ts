@@ -10,6 +10,7 @@ import { User } from 'src/users/entities/user.entity';
 import { CreatePolaroidDto } from './dto/create-polaroid.dto';
 import { LandmarksService } from 'src/landmarks/landmarks.service';
 import { UpdatePolaroidDto } from './dto/update-polaroid.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PolaroidsService {
@@ -17,6 +18,7 @@ export class PolaroidsService {
     @InjectRepository(Polaroid)
     private polaroidRepository: Repository<Polaroid>,
     private LandmarkService: LandmarksService,
+    private userService: UsersService,
   ) {}
 
   async create(
@@ -116,5 +118,13 @@ export class PolaroidsService {
   async polaroidCounts(user_id: number): Promise<number> {
     const polaroid = await this.findAll(user_id);
     return polaroid.length;
+  }
+
+  async findByPublic(user_id: number): Promise<Polaroid[]> {
+    const user = await this.userService.findOne(user_id);
+    const polaroid = await this.polaroidRepository.find({
+      where: { user_id, is_opened: true },
+    });
+    return polaroid;
   }
 }

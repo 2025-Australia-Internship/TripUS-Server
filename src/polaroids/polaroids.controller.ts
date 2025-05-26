@@ -28,14 +28,14 @@ export class PolaroidsController {
     return this.polaroidsService.create(user, createPolaroidDto);
   }
 
-  @Get('counts')
-  async counts(@UserInfo('id') id: number) {
-    return this.polaroidsService.polaroidCounts(id);
-  }
-
   @Get()
   async findAll(@UserInfo('id') id: number) {
     return this.polaroidsService.findAll(id);
+  }
+
+  @Get('counts')
+  async counts(@UserInfo('id') id: number) {
+    return this.polaroidsService.polaroidCounts(id);
   }
 
   @Get(':polaroid_id')
@@ -61,5 +61,10 @@ export class PolaroidsController {
     @Param('polaroid_id') polaroid_id: number,
   ) {
     return this.polaroidsService.delete(id, polaroid_id);
+  }
+
+  @Get(':user_id/public')
+  async findByPublic(@Param('user_id') user_id: number) {
+    return this.polaroidsService.findByPublic(user_id);
   }
 }

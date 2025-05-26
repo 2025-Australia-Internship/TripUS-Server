@@ -2,11 +2,11 @@ import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdatePolaroidDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   caption?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   color?: string;
 
   @IsBoolean()

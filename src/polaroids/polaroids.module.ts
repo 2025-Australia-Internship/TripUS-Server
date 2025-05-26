@@ -6,10 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Polaroid } from './entities/polaroid.entity';
 import { LandmarksModule } from 'src/landmarks/landmarks.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
     LandmarksModule,
+    UsersModule,
     JwtModule.registerAsync({
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET_KEY'),
