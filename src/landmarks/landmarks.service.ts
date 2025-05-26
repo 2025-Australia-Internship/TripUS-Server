@@ -35,6 +35,9 @@ export class LandmarksService {
 
   async findOne(id: number): Promise<Landmark | null> {
     try {
+      if (id === undefined || id === null) {
+        return null;
+      }
       return await this.LandmarkRepository.findOneBy({ id });
     } catch (e) {
       throw new InternalServerErrorException('Failed to retrieve landmark');
