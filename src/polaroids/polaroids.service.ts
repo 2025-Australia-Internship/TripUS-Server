@@ -127,4 +127,20 @@ export class PolaroidsService {
     });
     return polaroid;
   }
+
+  async findLandmarkPolaroid(
+    user_id: number,
+    landmark_id: number,
+  ): Promise<Polaroid[]> {
+    try {
+      const landmarkPolaroid = this.polaroidRepository.find({
+        where: { user_id, landmark_id },
+      });
+      return landmarkPolaroid;
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'Failed to retrieve landmark polaroids',
+      );
+    }
+  }
 }

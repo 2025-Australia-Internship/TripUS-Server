@@ -63,6 +63,14 @@ export class PolaroidsController {
     return this.polaroidsService.delete(id, polaroid_id);
   }
 
+  @Get('landmark/:landmark_id')
+  async findLandmarkdPolaroid(
+    @UserInfo('id') id: number,
+    @Param('landmark_id') landmark_id: number,
+  ) {
+    return this.polaroidsService.findLandmarkPolaroid(id, landmark_id);
+  }
+
   @Get(':user_id/public')
   async findByPublic(@Param('user_id') user_id: number) {
     return this.polaroidsService.findByPublic(user_id);
