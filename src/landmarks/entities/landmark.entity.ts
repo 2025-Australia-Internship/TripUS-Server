@@ -1,3 +1,4 @@
+import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 import { Polaroid } from 'src/polaroids/entities/polaroid.entity';
 import {
   Column,
@@ -39,6 +40,9 @@ export class Landmark {
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
 
-  @OneToMany(() => Polaroid, (polaroid) => polaroid.landmark_id)
+  @OneToMany(() => Polaroid, (polaroid) => polaroid.landmark)
   polaroids?: Polaroid[];
+
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.landmark)
+  bookmarks?: Bookmark[];
 }

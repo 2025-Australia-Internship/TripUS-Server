@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Polaroid } from 'src/polaroids/entities/polaroid.entity';
+import { Bookmark } from 'src/bookmarks/entities/bookmark.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -42,8 +43,11 @@ export class User {
   @CreateDateColumn({ name: 'created_at' })
   'created_at': Date;
 
-  @OneToMany(() => Polaroid, (polaroid) => polaroid.user_id)
+  @OneToMany(() => Polaroid, (polaroid) => polaroid.user)
   polaroids?: Polaroid[];
+
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  bookmarks?: Bookmark[];
 
   @BeforeInsert()
   private beforeInsert() {

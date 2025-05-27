@@ -11,6 +11,7 @@ import { LandmarksModule } from './landmarks/landmarks.module';
 import { PolaroidsModule } from './polaroids/polaroids.module';
 import { AuthModule } from './auth/auth.module';
 import { VisionModule } from './vision_ai/vision.module';
+import { BookmarkModule } from './bookmarks/bookmarks.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { VisionModule } from './vision_ai/vision.module';
     LandmarksModule,
     PolaroidsModule,
     VisionModule,
+    BookmarkModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
