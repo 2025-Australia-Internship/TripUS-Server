@@ -26,7 +26,9 @@ export class BookmarkService {
 
       const bookmark = {
         user,
+        user_id: user.id,
         landmark,
+        landmark_id,
       };
       return await this.bookmarkRepository.save(bookmark);
     } catch (e) {
@@ -35,5 +37,9 @@ export class BookmarkService {
       }
       throw new InternalServerErrorException('Failed to create bookmark');
     }
+  }
+
+  async find(id: number): Promise<Bookmark[] | null> {
+    return await this.bookmarkRepository.find({ where: { user: { id } } });
   }
 }

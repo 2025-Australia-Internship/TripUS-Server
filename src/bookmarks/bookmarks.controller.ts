@@ -1,13 +1,18 @@
-import { Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BookmarkService } from './bookmarks.service';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
 import { User } from 'src/users/entities/user.entity';
 
 @UseGuards(AuthGuard('jwt'))
-@Controller('api/bookmark')
+@Controller('api/bookmarks')
 export class BookmarkController {
   constructor(private bookmarkService: BookmarkService) {}
+
+  @Get()
+  async find(@UserInfo('id') id: number) {
+    return this.bookmarkService.find(id);
+  }
 
   @Post(':landmark_id')
   async create(
