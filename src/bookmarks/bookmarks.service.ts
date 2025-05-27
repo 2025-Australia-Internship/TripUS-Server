@@ -38,13 +38,12 @@ export class BookmarkService {
         throw new ConflictException('Bookmark already exists');
       }
 
-      const bookmark = {
+      const bookmark = this.bookmarkRepository.create({
         user,
         user_id: user.id,
         landmark,
         landmark_id,
-      };
-
+      });
       return await this.bookmarkRepository.save(bookmark);
     } catch (e) {
       if (e instanceof NotFoundException || e instanceof ConflictException) {
@@ -54,7 +53,7 @@ export class BookmarkService {
     }
   }
 
-  async find(user_id: number): Promise<Bookmark[] | null> {
+  async find(user_id: number): Promise<Bookmark[]> {
     return await this.bookmarkRepository.find({
       where: { user_id, is_marked: true },
     });
@@ -71,8 +70,7 @@ export class BookmarkService {
       throw new NotFoundException('Bookmark not found');
     }
 
-    const is_marked = bookmark ? bookmark.is_marked : false;
-    return { is_marked };
+    return { is_marked: bookmark.is_marked };
   }
 
   async update(
@@ -87,7 +85,7 @@ export class BookmarkService {
         throw new NotFoundException('Bookmark not found');
       }
 
-      bookmark.is_marked = bookmark.is_marked ? false : true;
+      bookmark.is_marked = !bookmark.is_marked;
       await this.bookmarkRepository.save(bookmark);
 
       return { is_marked: bookmark.is_marked };
