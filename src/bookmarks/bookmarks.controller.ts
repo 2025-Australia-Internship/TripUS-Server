@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BookmarkService } from './bookmarks.service';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
 import { User } from 'src/users/entities/user.entity';
-import { BookmarkDto } from './dto/bookmark.dto';
+import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('api/bookmarks')
@@ -12,11 +21,22 @@ export class BookmarkController {
 
   @Get()
   async find(@UserInfo('id') id: number) {
-    return this.bookmarkService.find(id);
+    return await this.bookmarkService.find(id);
   }
 
   @Post()
-  async create(@UserInfo() user: User, @Body() bookmarkDto: BookmarkDto) {
-    return this.bookmarkService.create(user, bookmarkDto);
+  async create(
+    @UserInfo() user: User,
+    @Body() createBookmarkDto: CreateBookmarkDto,
+  ) {
+    return this.bookmarkService.create(user, createBookmarkDto);
+  }
+
+  @Get(':landmark_id/status')
+  async findOne(
+    @UserInfo('id') id: number,
+    @Param('landmark_id') landmark_id: number,
+  ) {
+    return this.bookmarkService.findOne(id, landmark_id);
   }
 }

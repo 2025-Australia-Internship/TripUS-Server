@@ -9,7 +9,8 @@ import { Bookmark } from './entities/bookmark.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { LandmarksService } from 'src/landmarks/landmarks.service';
-import { BookmarkDto } from './dto/bookmark.dto';
+import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { BookmarkStatusResponseDto } from './dto/bookmark-status-response.dto';
 
 @Injectable()
 export class BookmarkService {
@@ -19,15 +20,18 @@ export class BookmarkService {
     private landmarkService: LandmarksService,
   ) {}
 
-  async create(user: User, bookmarkDto: BookmarkDto): Promise<Bookmark | null> {
+  async create(
+    user: User,
+    createBookmarkDto: CreateBookmarkDto,
+  ): Promise<Bookmark | null> {
     try {
-      const landmark_id = bookmarkDto.landmark_id;
+      const landmark_id = createBookmarkDto.landmark_id;
       const landmark = await this.landmarkService.findOne(landmark_id);
       if (!landmark) {
         throw new NotFoundException('Landmark not found');
       }
 
-      const exsitingBookmark = this.bookmarkRepository.find({
+      const exsitingBookmark = await this.bookmarkRepository.findOne({
         where: { user_id: user.id, landmark_id },
       });
       if (exsitingBookmark) {
@@ -40,6 +44,7 @@ export class BookmarkService {
         landmark,
         landmark_id,
       };
+
       return await this.bookmarkRepository.save(bookmark);
     } catch (e) {
       if (e instanceof NotFoundException || e instanceof ConflictException) {
@@ -50,6 +55,23 @@ export class BookmarkService {
   }
 
   async find(id: number): Promise<Bookmark[] | null> {
-    return await this.bookmarkRepository.find({ where: { user: { id } } });
+    return await this.bookmarkRepository.find({
+      where: { user: { id }, is_marked: true },
+    });
+  }
+
+  async findOne(
+    user_id: number,
+    landmark_id: number,
+  ): Promise<BookmarkStatusResponseDto> {
+    const bookmark = await this.bookmarkRepository.findOne({
+      where: { user_id, landmark_id },
+    });
+    if (!bookmark) {
+      throw new NotFoundException('Bookmark not found');
+    }
+
+    const is_marked = bookmark ? bookmark.is_marked : false;
+    return { is_marked };
   }
 }

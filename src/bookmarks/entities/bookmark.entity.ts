@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Landmark } from 'src/landmarks/entities/landmark.entity';
 import { User } from 'src/users/entities/user.entity';
 import {

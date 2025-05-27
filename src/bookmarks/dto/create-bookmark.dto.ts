@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
-export class BookmarkDto {
+export class CreateBookmarkDto {
   @IsNumber()
   @IsNotEmpty()
   landmark_id: number;
