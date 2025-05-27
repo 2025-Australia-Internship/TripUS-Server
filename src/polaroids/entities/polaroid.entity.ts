@@ -40,7 +40,6 @@ export class Polaroid {
 
   @ManyToOne(() => Landmark, (landmark) => landmark.polaroids, {
     nullable: true,
-    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'landmark_id' })
   landmark?: Landmark;
