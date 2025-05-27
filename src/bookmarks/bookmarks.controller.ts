@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   UseGuards,
   UseInterceptors,
@@ -30,6 +31,14 @@ export class BookmarkController {
     @Body() createBookmarkDto: CreateBookmarkDto,
   ) {
     return this.bookmarkService.create(user, createBookmarkDto);
+  }
+
+  @Patch(':landmark_id')
+  async update(
+    @UserInfo('id') id: number,
+    @Param('landmark_id') landmark_id: number,
+  ) {
+    return this.bookmarkService.update(id, landmark_id);
   }
 
   @Get(':landmark_id/status')

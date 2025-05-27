@@ -54,9 +54,9 @@ export class BookmarkService {
     }
   }
 
-  async find(id: number): Promise<Bookmark[] | null> {
+  async find(user_id: number): Promise<Bookmark[] | null> {
     return await this.bookmarkRepository.find({
-      where: { user: { id }, is_marked: true },
+      where: { user_id, is_marked: true },
     });
   }
 
@@ -73,5 +73,31 @@ export class BookmarkService {
 
     const is_marked = bookmark ? bookmark.is_marked : false;
     return { is_marked };
+  }
+
+  async update(
+    user_id: number,
+    landmark_id: number,
+  ): Promise<BookmarkStatusResponseDto> {
+    try {
+      const bookmark = await this.bookmarkRepository.findOne({
+        where: { user_id, landmark_id },
+      });
+      if (!bookmark) {
+        throw new NotFoundException('Bookmark not found');
+      }
+
+      bookmark.is_marked = bookmark.is_marked ? false : true;
+      await this.bookmarkRepository.save(bookmark);
+
+      return { is_marked: bookmark.is_marked };
+    } catch (e) {
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException(
+        'Failed to change bookmark status',
+      );
+    }
   }
 }
