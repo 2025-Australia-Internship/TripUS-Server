@@ -64,4 +64,8 @@ export class LikesService {
       await queryRunner.release();
     }
   }
+
+  async find(user_id: number): Promise<Likes[]> {
+    return await this.likesRepository.find({ where: { user_id } });
+  }
 }

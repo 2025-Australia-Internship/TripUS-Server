@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { LikesService } from './likes.service';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
@@ -13,5 +13,10 @@ export class LikesController {
   @Post()
   async create(@UserInfo() user: User, @Body() createLikesDto: CreateLikesDto) {
     return this.likesService.create(user, createLikesDto);
+  }
+
+  @Get()
+  async find(@UserInfo('id') id: number) {
+    return this.likesService.find(id);
   }
 }
