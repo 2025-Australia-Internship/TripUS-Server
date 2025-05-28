@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Landmark } from './entities/landmark.entity';
-import { Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LandmarkDto } from './dto/landmark.dto';
 
@@ -13,7 +13,7 @@ import { LandmarkDto } from './dto/landmark.dto';
 export class LandmarksService {
   constructor(
     @InjectRepository(Landmark)
-    private LandmarkRepository: Repository<Landmark>,
+    private readonly LandmarkRepository: Repository<Landmark>,
   ) {}
 
   async create(landmarkDto: LandmarkDto): Promise<Landmark> {
@@ -58,5 +58,13 @@ export class LandmarksService {
       }
       throw new InternalServerErrorException('Failed to create landmark');
     }
+  }
+
+  async incrementLikes(id: number, queryRunner: QueryRunner) {
+    return await queryRunner.manager.increment(Landmark, { id }, 'likes', 1);
+  }
+
+  async decrementLikes(id: number, queryRunner: QueryRunner) {
+    return await queryRunner.manager.decrement(Landmark, { id }, 'likes', 1);
   }
 }
