@@ -10,6 +10,7 @@ import { User } from 'src/users/entities/user.entity';
 import { LandmarksService } from 'src/landmarks/landmarks.service';
 import { CreateLikesDto } from './dto/create-like.dto';
 import { Likes } from './entities/likes.entity';
+import { LikeStatusResponseDto } from './dto/like-status-response.dto';
 
 @Injectable()
 export class LikesService {
@@ -67,5 +68,19 @@ export class LikesService {
 
   async find(user_id: number): Promise<Likes[]> {
     return await this.likesRepository.find({ where: { user_id } });
+  }
+
+  async findOne(
+    user_id: number,
+    landmark_id: number,
+  ): Promise<LikeStatusResponseDto> {
+    const bookmark = await this.likesRepository.findOne({
+      where: { user_id, landmark_id },
+    });
+    if (!bookmark) {
+      throw new NotFoundException('Like not found');
+    }
+
+    return { is_liked: bookmark.is_liked };
   }
 }
