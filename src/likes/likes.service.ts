@@ -83,4 +83,42 @@ export class LikesService {
 
     return { is_liked: bookmark.is_liked };
   }
+
+  async update(
+    user_id: number,
+    landmark_id: number,
+  ): Promise<LikeStatusResponseDto> {
+    const queryRunner = await this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const like = await queryRunner.manager.findOne(Likes, {
+        where: { user_id, landmark_id },
+      });
+      if (!like) {
+        throw new NotFoundException('Like not found');
+      }
+
+      like.is_liked = !like.is_liked;
+      if (like.is_liked) {
+        await this.landmarkService.incrementLikes(landmark_id, queryRunner);
+      } else {
+        await this.landmarkService.decrementLikes(landmark_id, queryRunner);
+      }
+
+      await queryRunner.manager.save(Likes, like);
+      await queryRunner.commitTransaction();
+
+      return { is_liked: like.is_liked };
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      if (e instanceof NotFoundException) {
+        throw e;
+      }
+      throw new InternalServerErrorException('Failed to change likes');
+    } finally {
+      await queryRunner.release();
+    }
+  }
 }

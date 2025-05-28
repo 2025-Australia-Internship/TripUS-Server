@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { LikesService } from './likes.service';
 import { UserInfo } from 'src/users/utils/userInfo.decorator';
@@ -26,5 +34,13 @@ export class LikesController {
     @Param('landmark_id') landmark_id: number,
   ) {
     return this.likesService.findOne(id, landmark_id);
+  }
+
+  @Patch(':landmark_id')
+  async update(
+    @UserInfo('id') id: number,
+    @Param('landmark_id') landmark_id: number,
+  ) {
+    return this.likesService.update(id, landmark_id);
   }
 }
