@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { VisionModule } from './vision_ai/vision.module';
 import { BookmarkModule } from './bookmarks/bookmarks.module';
 import { LikesModule } from './likes/likes.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { LikesModule } from './likes/likes.module';
     }),
     TypeOrmModule.forRoot(typeORMConfig),
     AuthModule,
+    FriendsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtStrategy }],
