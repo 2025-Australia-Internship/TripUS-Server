@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { LandmarksService } from './landmarks.service';
 import { LandmarkDto } from './dto/landmark.dto';
 
-@Controller('landmarks')
+@Controller('api/landmarks')
 export class LandmarksController {
   constructor(private readonly landmarksService: LandmarksService) {}
 
