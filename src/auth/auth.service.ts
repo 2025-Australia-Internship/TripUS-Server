@@ -32,17 +32,18 @@ export class AuthService {
         throw new BadRequestException('Email is already in use.');
       }
 
-      const newUser = await this.userRepository.save(registerDto);
+      const hashedPassword = await hash(registerDto.password, 10);
 
-      // 순차적으로 로그인하기 위해 토큰 발급
-      const payload = { email: newUser.email, sub: newUser.id };
-      const access_token = this.JwtService.sign(payload);
+      const newUser = {
+        ...registerDto,
+        password: hashedPassword,
+      };
+      await this.userRepository.save(newUser);
 
       return {
         status: HttpStatus.CREATED,
         message: 'User created successfully',
         data: newUser,
-        access_token: access_token,
       };
     } catch (e) {
       if (e instanceof BadRequestException) {
@@ -51,42 +52,7 @@ export class AuthService {
       throw new InternalServerErrorException(`Failed to create user : ${e}`);
     }
   }
-
-  async completeRegister(
-    id: number,
-    registerDto: RegisterDto,
-  ): Promise<Object> {
-    try {
-      const existingUsername = await this.userService.findUserByUsername(
-        registerDto.username,
-      );
-      if (existingUsername) {
-        throw new BadRequestException('Username is already in use.');
-      }
-
-      const hashedPassword = await hash(registerDto.password, 10);
-
-      const userInfo = {
-        ...registerDto,
-        password: hashedPassword,
-      };
-
-      await this.userRepository.update(id, userInfo);
-      const complateUser = await this.userRepository.findOneBy({ id });
-
-      return {
-        status: HttpStatus.OK,
-        message: 'User created successfully',
-        data: complateUser,
-      };
-    } catch (e) {
-      if (e instanceof BadRequestException) {
-        throw e;
-      }
-      throw new InternalServerErrorException(`Failed to create user : ${e}`);
-    }
-  }
-
+  
   // 로그인
   async login(loginDto: LoginDto): Promise<Object> {
     try {

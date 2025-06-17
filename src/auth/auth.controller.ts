@@ -27,18 +27,17 @@ export class AuthController {
     return await this.authService.register(registerDto);
   }
 
-  @Get('check-username')
-  async checkUsername(@Query('username') username: string) {
-    return await this.userService.checkUsername(username);
+  @Get('check-email') 
+  async checkEmail(@Query('email') email: string) {
+    console.log('이메일 중복 확인 요청 들어옴:', email);
+    const user = await this.userService.findUserByEmail(email);
+    return { isDuplicate: !!user }; // true면 중복
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Patch('register')
-  async completeRegister(
-    @UserInfo('id') id: number,
-    @Body() registerDto: RegisterDto,
-  ) {
-    return await this.authService.completeRegister(id, registerDto);
+  @Get('check-username')
+  async checkUsername(@Query('username') username: string) {
+    const isDuplicate = await this.userService.checkUsername(username);
+    return { isDuplicate };
   }
 
   @Post('login')
