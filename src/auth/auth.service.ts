@@ -65,8 +65,8 @@ export class AuthService {
         throw new NotFoundException('User not found.');
       }
 
-      const isPasswordVaild = await compare(loginDto.password, user.password);
-      if (!isPasswordVaild) {
+      const isPasswordValid = await compare(loginDto.password, user.password);
+      if (!isPasswordValid) {
         throw new UnauthorizedException('Password is incorrect.');
       }
 

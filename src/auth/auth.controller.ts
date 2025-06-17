@@ -7,6 +7,7 @@ import {
   Post,
   Query,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { LoginDto } from 'src/auth/dto/login.dto';
 import { RegisterDto } from 'src/auth/dto/register.dto';
@@ -40,6 +41,7 @@ export class AuthController {
     return { isDuplicate };
   }
 
+  @HttpCode(200)
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return await this.authService.login(loginDto);
