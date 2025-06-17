@@ -26,6 +26,16 @@ export class UsersService {
     return await this.userRepository.findOneBy({ username });
   }
 
+  async checkUsername(username: string): Promise<Boolean> {
+    const existingUser = await this.findUserByUsername(username);
+    console.log(existingUser);
+    if (existingUser) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   async findOne(id: number): Promise<User> {
     try {
       const user = await this.userRepository.findOneBy({ id });
