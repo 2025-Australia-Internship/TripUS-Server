@@ -47,6 +47,7 @@ export class PolaroidsService {
     try {
       return await this.polaroidRepository.find({
         where: { user_id },
+        order: { created_at: 'DESC' },
       });
     } catch (e) {
       throw new InternalServerErrorException('Failed to retrieve polaroids');
